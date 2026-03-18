@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --text: #6b6375;
+    --text-h: #08060d;
+    --bg: #fff;
+    --border: #e5e4e7;
+    --accent: #aa3bff;
+  }
+
+  .dark {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --bg: #16171d;
+    --border: #2e303a;
+    --accent: #c084fc;
+  }
+  body {
+    @apply font-orbitron bg-bg text-text min-h-screen;
+  }
+
+  h1, h2, h3 {
+    @apply font-orbitron;
+  }
+  h1 {
+    @apply text-heading text-4xl md:text-6xl font-medium my-8;
+  }
+
+  h2 {
+    @apply text-heading text-xl md:text-2xl mb-2;
+  }
+}
