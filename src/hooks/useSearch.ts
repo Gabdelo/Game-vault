@@ -15,7 +15,7 @@ export const useSearch = (GameName:string) => {
         if (GameName.trim().length < 1) {
             setGames([])
             return
-        }
+        } 
         const timeout = setTimeout(async() => {
             abortController.current?.abort() //cancelamos la peticion anterior
             const controller = new AbortController() //creamos una nueva instancia de AbortController
