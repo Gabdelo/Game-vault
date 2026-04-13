@@ -12,17 +12,14 @@ export const useSearch = (GameName:string) => {
 
     useEffect(() => {
         //si lo dejaramos vacio  se haria una peticion por default, lo que no es deseable
-        if (GameName.trim().length < 1) {
-            setGames([])
-            return
-        } 
+        
         const timeout = setTimeout(async() => {
             abortController.current?.abort() //cancelamos la peticion anterior
             const controller = new AbortController() //creamos una nueva instancia de AbortController
             abortController.current = controller //asignamos la nueva instancia a la referencia
             try{
                 setLoading(true)
-                const data = await searchGames(GameName, controller.signal) //pasamos la señal de abort a la funcion de busqueda
+                const data = await searchGames(GameName, 1, controller.signal) //pasamos la señal de abort a la funcion de busqueda
                 setGames(data.results)
             } catch (error) {
                 console.error("Error fetching games:", error)

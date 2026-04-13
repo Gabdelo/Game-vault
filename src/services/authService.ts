@@ -1,9 +1,9 @@
-import { directus } from "../api/directus"
+import { directus, directusPublic } from "../api/directus"
 import { registerUser } from "@directus/sdk"
 
 export const register = async (username: string, email: string, password: string) => {
   try {
-    const result = await directus.request(registerUser(email, password, {first_name: username,}))
+    const result = await directusPublic.request(registerUser(email, password, {first_name: username,}))
     console.log("Registered user:", result)
     return result
   } catch (error) {

@@ -50,7 +50,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       // Intenta refrescar el token
       if (parsed?.refresh_token) {
         try {
-          await directus.request(refresh('json', parsed.refresh_token))
+          await directus.request(refresh(parsed.refresh_token))
         } catch (error) {
           console.warn('Token refresh failed:', error)
         }

@@ -1,40 +1,187 @@
-import {Link } from "react-router-dom";
+import {Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
+import { useState, useRef, useEffect } from "react";
+import { useSearch } from "../hooks/useSearch";
+import { GameSearch } from "@/components/Search";
+import { FiBook, FiUser, FiLogOut } from "react-icons/fi";
+import { navbarStyles } from "@/styles/navbarStyle";
+import { useToast } from "@/components/ui/CyberToast";
+import '../styles/styles.css'
+import { CyberpunkButton } from "@/components/ui/Button";
+import CyberButton from "@/components/ui/CyberButton";
 
-export const Navbar = () => {
+interface NavbarProps {
+    onSetQuery?: (query: string) => void
+    onSetSubmitted?: (submitted: boolean) => void
+}
+
+export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
+    const navigate = useNavigate()
     const isAuthenticated = useAuthStore(state => state.isAuthenticated)
     const user = useAuthStore(state => state.user)
     const logout = useAuthStore(state => state.logout)
+    const { toast } = useToast()
+    const [query, setQuery] = useState("")
+    const [submitted, setSubmitted] = useState(false)
+    const [showProfileMenu, setShowProfileMenu] = useState(false)
+    const profileMenuRef = useRef<HTMLDivElement>(null)
+    const { games, loading } = useSearch(query)
+    
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+                setShowProfileMenu(false)
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [])
+    
+    const handleLogout = () => {
+        logout()
+        setShowProfileMenu(false)
+        toast({
+            variant: 'success',
+            title: 'Sesión cerrada',
+            message: 'Tu sesión ha sido cerrada correctamente',
+            duration: 3500
+        })
+        navigate("/")
+    }
+
+    const handleLogoClick = () => {
+        window.location.href = "/"
+    }
+    
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" && query.trim()) {
+            setSubmitted(true)
+            onSetSubmitted?.(true)
+            navigate("/search", { state: { query, submitted: true } })
+        }
+    }
+    
+    const handleInputChange = (value: string) => {
+        setQuery(value)
+        setSubmitted(false)
+        onSetSubmitted?.(false)
+        onSetQuery?.(value)
+    }
 
     return (
-        <nav className="bg-gray-800 text-white p-2">
-            <div className="container mx-auto flex justify-between items-center">
-                <div className="text-xl font-bold">Game Vault</div>
-            </div>
-            <div className="container mx-auto flex justify-end items-center space-x-4">
-                {!isAuthenticated && (
-                    <>
-                        <Link to="/welcome" state={{ isInLogin: true }} className="text-blue-500 hover:underline">Iniciar Sesión</Link>
-                        <Link to="/welcome" state={{ isInLogin: false }} className="text-blue-500 hover:underline">Registrarse</Link>
-                    </>
-                )}
-                {isAuthenticated && (
-                    <button onClick={logout} className="text-blue-500 hover:underline">Cerrar sesión</button>
-                )}
-            </div>
-            <div className="container mx-auto flex justify-end items-center space-x-4 mt-2">
-                {isAuthenticated && user && (
-                    <div className="text-sm text-gray-300">
-                        <p className="text-sm text-gray-300">
-                        Bienvenido, {user.first_name} {user.email}
-                    </p>
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded mt-2">
-                    <Link to="/library">Mi Biblioteca</Link>
+        <>
+            <style>{navbarStyles}</style>
+          
+        
+            <nav className=" nav-cyber text-white p-2 relative z-10 rounded-br-[3rem] rounded-bl-[3rem]">
+                <div className="container mx-auto flex justify-between items-center space-x-4" style={{ position: 'relative', zIndex: 1 }}>
+
+                    {/* Logo */}
+                    <button onClick={handleLogoClick} className="flex-shrink-0 bg-none border-none cursor-pointer p-0">
+                        <img
+                            src="/logo4.webp"
+                            alt="GameVault"
+                            className="h-10 w-auto nav-logo-img"
+                        />
                     </button>
 
+                    {/* Buscador */}
+                    <div className="flex-1 max-w-md nav-search-wrapper">
+                        <GameSearch
+                            value={query}
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyDown}
+                            resultCount={query && !submitted ? games.length : undefined}
+                        />
+
+                        {/* Modal Popup */}
+                        {query && !submitted && (
+                            <div className="nav-results-dropdown absolute top-full left-[30%] right-0 mt-1 w-[25%] z-50 max-h-80 overflow-y-auto">
+                                {loading && (
+                                    <div className="p-4 nav-empty-text">Cargando...</div>
+                                )}
+                                {!loading && games.length === 0 && (
+                                    <div className="p-4 nav-empty-text">Sin resultados</div>
+                                )}
+                                {!loading && games.length > 0 && (
+                                    <ul className="divide-y divide-gray-900">
+                                        {games.map(game => (
+                                            <Link key={game.id} to={`/game/${game.id}`} state={{ game }}>
+                                                <li className="nav-results-item p-3 cursor-pointer transition-colors">
+                                                    <div className="flex items-center gap-3">
+                                                        {game.background_image && (
+                                                            <img
+                                                                src={game.background_image}
+                                                                alt={game.name}
+                                                                className="w-10 h-10 object-cover"
+                                                                style={{ borderRadius: '3px', border: '1px solid rgba(168,50,255,0.2)' }}
+                                                            />
+                                                        )}
+                                                        <div className="flex-1">
+                                                            <p className="font-semibold text-sm">{game.name}</p>
+                                                            <p className="text-xs">{game.released}</p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </Link>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        )}
                     </div>
-                )}
-            </div>
-        </nav>
+
+                    {/* Auth Section */}
+                    <div className="flex items-center space-x-4">
+                        {!isAuthenticated && (
+                            <>
+                                <Link to="/welcome" state={{ isInLogin: true }} className="nav-auth-link">
+                                    Iniciar Sesión
+                                </Link>
+                                <div className="nav-sep" />
+                                <Link to="/welcome" state={{ isInLogin: false }} className="nav-auth-link">
+                                    Registrarse
+                                </Link>
+                            </>
+                        )}
+                        {isAuthenticated && (
+                            <>
+                                {/* Biblioteca */}
+                                <CyberButton variant="secondary" accentColor="#FBFF00" className="px-3 py-1 rounded-md">
+                                <Link to="/library" className=" flex items-center gap-2 transition-colors">
+                                    <FiBook size={16} />
+                                    <span>Biblioteca</span>
+                                </Link>
+                                </CyberButton>
+
+                                <div className="nav-sep" />
+
+                                {/* Profile Dropdown */}
+                                <div className="relative" ref={profileMenuRef}>
+                                    <CyberButton onClick={() => setShowProfileMenu(!showProfileMenu)} variant="secondary" accentColor="#00FFFF">
+                                  
+                                        <FiUser size={16} />
+                                        <span>{user?.email?.split('@')[0]}</span>
+                                        <span style={{ opacity: 0.4, fontSize: '8px' }}>▼</span>
+                                    
+                                    </CyberButton>
+                                    {/* Dropdown Menu */}
+                                    {showProfileMenu && (
+                                        <div className="nav-profile-dropdown absolute right-0 mt-2 w-48 z-50 py-1">
+                                            <CyberpunkButton variant="danger" onClick={handleLogout} >
+                                                <FiLogOut size={14} />
+                                                Cerrar Sesión
+                                            </CyberpunkButton>
+                                            
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+            </nav>
+           
+        </>
     )
 }
