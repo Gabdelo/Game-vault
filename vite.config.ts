@@ -10,10 +10,14 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    outDir: "dist",
+    sourcemap: false,
+  },
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:8055",
+        target: "https://directus-latest-i2px.onrender.com",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
