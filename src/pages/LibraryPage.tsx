@@ -22,12 +22,11 @@ export const LibraryPage = () => {
     const [sortBy, setSortBy] = useState<"all" | "recent" | "favorites">("all")
     const [genres, setGenres] = useState<any[]>([])
     const [gameGenres, setGameGenres] = useState<Map<number, number[]>>(new Map())
-
+    const [showSidebarMobile, setShowSidebarMobile] = useState(false)
     // Sincronizar gamesList cuando games carga
     useEffect(() => {
         setGamesList(games)
     }, [games])
-
     // Obtener géneros de las relaciones game_genres
     useEffect(() => {
         const fetchGameGenres = async () => {
@@ -57,7 +56,6 @@ export const LibraryPage = () => {
         }
         fetchGameGenres()
     }, [])
-
     // Filtrar juegos según búsqueda, género, status y ordenamiento
     const filteredGames = gamesList.filter(game => {
         const matchesSearch = game.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -74,7 +72,6 @@ export const LibraryPage = () => {
         }
         return 0
     })
-
     const handleDeleteGame = async (gameId: number) => {
         if (!user?.id) return
         try {
@@ -85,7 +82,6 @@ export const LibraryPage = () => {
             console.error("Error al eliminar juego:", error)
         }
     }
-
     const handleChangeStatus = async (gameId: number, newStatus: string) => {
         if (!user?.id) return
         try {
@@ -100,7 +96,6 @@ export const LibraryPage = () => {
             console.error("Error al cambiar status:", error)
         }
     }
-
     const getStatusColor = (status: string | null) => {
         switch(status) {
             case 'playing': return 'bg-blue-500'
@@ -110,7 +105,6 @@ export const LibraryPage = () => {
             default: return 'bg-gray-500'
         }
     }
-
     const getStatusTooltip = (status: string | null) => {
         switch(status) {
             case 'playing': return 'Jugando'
@@ -120,62 +114,113 @@ export const LibraryPage = () => {
             default: return 'Sin estado'
         }
     }
-
     return (
-        <div className="pt-36 px-8 min-h-screen mx-auto bg-black/80">
-            {/* Header */}
-            <div className="flex flex-row justify-between mb-8">
-                <h2 className="text-4xl font-bold tracking-wide text-white">
-                    TU BIBLIOTECA
-                </h2>
-                <p className="text-gray-400 mt-1 text-sm">
-                    {gamesList.length > 0
-                        ? `${gamesList.length} juego${gamesList.length !== 1 ? "s" : ""} en tu colección`
-                        : "Aquí podrás ver los juegos que has agregado a tu biblioteca."}
-                </p>
-            <Link to="/stats">      
-                <CyberButton variant="primary" accentColor="#FBFF00" className="mt-4 px-3 py-1 rounded-md">
-                    ANALÍTICAS
-                </CyberButton>
-            </Link>
-        
+        <div className="h-screen flex flex-col relative overflow-hidden">
+            {/* Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-black via-black/90 to-black/80 z-0"></div>
+
+            {/* TOP SECTION: Botón de filtros + Buscador (mobile) */}
+            <div className="relative z-20 pt-[5rem]">
+                <div className="md:hidden flex items-center gap-2 px-2 sm:px-4 py-3 border-b border-white/10">
+                    <button 
+                        onClick={() => setShowSidebarMobile(!showSidebarMobile)}
+                        className="flex items-center gap-2 px-2 sm:px-3 py-2 rounded border border-white/20 hover:border-yellow-400 text-white hover:text-yellow-400 transition-colors whitespace-nowrap text-sm"
+                        title="Filtros"
+                    >
+                        ☰ Filtros
+                    </button>
+
+                    {/* Buscador mobile */}
+                    <div className="flex-1 min-w-0">
+                        <input
+                            type="text"
+                            placeholder="Buscar juego..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full px-2 sm:px-3 py-1.5 bg-white/5 border border-white/20 rounded text-white placeholder-white/40 text-sm focus:outline-none focus:border-yellow-400"
+                        />
+                    </div>
+                </div>
+
+                {/* Dropdown Filtros Mobile */}
+                {showSidebarMobile && (
+                    <div className="md:hidden bg-black/90 border-b border-white/10 overflow-y-auto max-h-[50vh] z-20">
+                        <div className="p-4">
+                            <LibrarySidebar
+                                searchQuery=""
+                                onSearchChange={() => {}}
+                                sortBy={sortBy}
+                                onSortChange={setSortBy}
+                                selectedStatus={selectedStatus}
+                                onStatusChange={setSelectedStatus}
+                                genres={genres}
+                                selectedGenre={selectedGenre}
+                                onGenreChange={setSelectedGenre}
+                                hideSearch={true}
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
 
-            {/* Loading state */}
-            {loading && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                    {Array.from({ length: 10 }).map((_, index) => (
-                        <GameCardSkeleton key={index} />
-                    ))}
+            {/* Contenido principal */}
+            <div className="relative z-10 flex-1 flex flex-col overflow-hidden">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-8 px-2 sm:px-4 md:px-8 pt-4">
+                    <div>
+                        <h2 className="text-2xl sm:text-4xl font-bold tracking-wide text-white">
+                            TU BIBLIOTECA
+                        </h2>
+                        <p className="text-gray-400 mt-1 text-xs sm:text-sm">
+                            {gamesList.length > 0
+                                ? `${gamesList.length} juego${gamesList.length !== 1 ? "s" : ""} en tu colección`
+                                : "Aquí podrás ver los juegos que has agregado a tu biblioteca."}
+                        </p>
+                    </div>
+                    <Link to="/stats">      
+                        <CyberButton variant="primary" accentColor="#FBFF00" className="mt-2 sm:mt-0 px-3 py-1 rounded-md text-xs sm:text-sm">
+                            ANALÍTICAS
+                        </CyberButton>
+                    </Link>
                 </div>
-            )}
 
-            {/* Empty state */}
-            {!loading && gamesList.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-24 text-gray-500">
-                   
-                    <p className="text-lg font-medium">Tu biblioteca está vacía</p>
-                    <p className="text-sm mt-1">Agrega juegos para verlos aquí</p>
-                </div>
-            )}
+                {/* Loading state */}
+                {loading && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 px-2 sm:px-4 md:px-8">
+                        {Array.from({ length: 10 }).map((_, index) => (
+                            <GameCardSkeleton key={index} />
+                        ))}
+                    </div>
+                )}
 
-            {/* Main content with sidebar */}
-            {!loading && gamesList.length > 0 && (
-                <div className="flex gap-8">
-                    <LibrarySidebar
-                        searchQuery={searchQuery}
-                        onSearchChange={setSearchQuery}
-                        sortBy={sortBy}
-                        onSortChange={setSortBy}
-                        selectedStatus={selectedStatus}
-                        onStatusChange={setSelectedStatus}
-                        genres={genres}
-                        selectedGenre={selectedGenre}
-                        onGenreChange={setSelectedGenre}
-                    />
+                {/* Empty state */}
+                {!loading && gamesList.length === 0 && (
+                    <div className="flex flex-col items-center justify-center py-24 text-gray-500">
+                        <p className="text-lg font-medium">Tu biblioteca está vacía</p>
+                        <p className="text-sm mt-1">Agrega juegos para verlos aquí</p>
+                    </div>
+                )}
 
-                    {/* GRID - Games display */}
-                    <div className="flex-1">
+                {/* Main content with sidebar */}
+                {!loading && gamesList.length > 0 && (
+                    <div className="flex gap-4 md:gap-8 overflow-hidden flex-1">
+                        {/* Sidebar Desktop - hidden en móviles */}
+                        <div className="hidden md:block w-64 flex-shrink-0 sticky top-0 h-full overflow-y-auto">
+                            <LibrarySidebar
+                                searchQuery={searchQuery}
+                                onSearchChange={setSearchQuery}
+                                sortBy={sortBy}
+                                onSortChange={setSortBy}
+                                selectedStatus={selectedStatus}
+                                onStatusChange={setSelectedStatus}
+                                genres={genres}
+                                selectedGenre={selectedGenre}
+                                onGenreChange={setSelectedGenre}
+                            />
+                        </div>
+
+                        {/* GRID - Games display */}
+                        <div className="flex-1 overflow-y-auto pb-8 px-2 sm:px-4">
                         {filteredGames.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-24 text-gray-500">
                                 <p className="text-lg">No se encontraron juegos</p>
@@ -241,8 +286,9 @@ export const LibraryPage = () => {
                             </div>
                         )}
                     </div>
-                </div>
-            )}
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

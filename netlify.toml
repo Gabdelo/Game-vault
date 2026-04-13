@@ -6,7 +6,6 @@
   from = "/*"
   to = "/index.html"
   status = 200
-
 [context.development]
   command = "npm run dev"
   publish = "dist"

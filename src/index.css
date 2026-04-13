@@ -96,11 +96,17 @@
     min-height: 100vh;
     background-color: var(--background);
     color: var(--foreground);
+    overflow-x: hidden;
+  }
+
+  html {
+    overflow-x: hidden;
   }
 
   h1, h2, h3 {
     font-family: Orbitron, sans-serif;
   }
+
   h1 {
     @apply text-heading text-4xl md:text-6xl font-medium my-8;
   }
@@ -108,13 +114,16 @@
   h2 {
     @apply text-heading text-xl md:text-2xl mb-2;
   }
+
   .theme {
     --font-heading: var(--font-sans);
     --font-sans: 'Geist Variable', sans-serif;
   }
+
   * {
     @apply border-border outline-ring;
   }
+
   html {
     @apply font-sans;
   }

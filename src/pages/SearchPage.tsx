@@ -5,11 +5,12 @@ import type { Game } from "../types/game";
 import GameCard from "../components/ui/GameCard";
 import GameCardSkeleton from "../components/ui/GameCardSkeleton";
 import { useAuthStore } from "../store/authStore";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { getGamesInLibrary } from "../services/gamesService";
 import { MainPage } from "./MainPage";
 import { FilterSidebar } from "../components/FilterSidebar";
 import { Pagination } from "@/components/Pagination";
+import { useSearch } from "@/hooks/useSearch";
 
 
 
@@ -27,6 +28,8 @@ export const SearchPage = () => {
     const [activeFilter, setActiveFilter] = useState<string>("")
     const [filteredGames, setFilteredGames] = useState<Game[]>([])
     const [filterLoading, setFilterLoading] = useState(false)
+    const [showSidebarMobile, setShowSidebarMobile] = useState(false)
+    const { games: searchResults, loading: searchLoading } = useSearch(query)
     
     // Paginación para búsqueda
     const [currentPage, setCurrentPage] = useState(1)
@@ -177,8 +180,22 @@ export const SearchPage = () => {
         document.querySelector(".flex-1.overflow-y-auto.pt-8")?.scrollTo({ top: 0, behavior: "smooth" })
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" && query.trim()) {
+            setSubmitted(true)
+            setActiveGenre("")
+            setActiveFilter("")
+            setCurrentPage(1)
+        }
+    }
+
+    const handleInputChange = (value: string) => {
+        setQuery(value)
+        setSubmitted(false)
+    }
+
     return (
-        <div className="min-h-screen relative overflow-hidden">
+        <div className="h-screen flex flex-col relative overflow-hidden">
             {/* Background con blur */}
             
             <div
@@ -198,27 +215,107 @@ export const SearchPage = () => {
             {/* Overlay oscuro opcional para mejorar legibilidad */}
             <div className="absolute inset-0 bg-black/10" />
 
-            {/* Contenido */}
-            <div className="relative z-10 h-[calc(100vh-100px)] flex gap-6 px-4 pt-[3rem]">
-                {submitted ? (
-                    <>
-                        {/* Sidebar FIJO */}
-                        <div className="w-64 flex-shrink-0 sticky top-0 h-screen overflow-y-auto">
+            {/* TOP SECTION: Botón de filtros + Buscador solo en mobile */}
+            <div className="relative z-20 pt-[5rem]">
+                <div className="md:hidden flex items-center gap-2 px-2 sm:px-4 py-3 border-b border-white/10">
+                    <button 
+                        onClick={() => setShowSidebarMobile(!showSidebarMobile)}
+                        className="flex items-center gap-2 px-2 sm:px-3 py-2 rounded border border-white/20 hover:border-yellow-400 text-white hover:text-yellow-400 transition-colors whitespace-nowrap text-sm"
+                        title="Filtros"
+                    >
+                        ☰ Filtros
+                    </button>
+
+                    {/* Buscador mobile */}
+                    <div className="flex-1 min-w-0 relative">
+                        <input
+                            type="text"
+                            placeholder="Buscar juego..."
+                            value={query}
+                            onChange={(e) => handleInputChange(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            className="w-full px-2 sm:px-3 py-1.5 bg-white/5 border border-white/20 rounded text-white placeholder-white/40 text-sm focus:outline-none focus:border-yellow-400"
+                        />
+
+                        {/* Dropdown de resultados */}
+                        {query && !submitted && (
+                            <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-white/20 rounded max-h-64 overflow-y-auto z-50">
+                                {searchLoading && (
+                                    <div className="p-3 text-white/50 text-sm">Cargando...</div>
+                                )}
+                                {!searchLoading && searchResults.length === 0 && (
+                                    <div className="p-3 text-white/50 text-sm">Sin resultados</div>
+                                )}
+                                {!searchLoading && searchResults.length > 0 && (
+                                    <ul className="divide-y divide-gray-900">
+                                        {searchResults.map(game => (
+                                            <Link key={game.id} to={`/game/${game.id}`} state={{ game }}>
+                                                <li className="p-2 hover:bg-white/10 cursor-pointer transition-colors">
+                                                    <div className="flex items-center gap-2">
+                                                        {game.background_image && (
+                                                            <img
+                                                                src={game.background_image}
+                                                                alt={game.name}
+                                                                className="w-8 h-8 object-cover rounded"
+                                                            />
+                                                        )}
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="font-semibold text-xs text-white truncate">{game.name}</p>
+                                                            <p className="text-xs text-white/50">{game.released}</p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </Link>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Dropdown Filtros Mobile - bajo el botón */}
+                {showSidebarMobile && (
+                    <div className="md:hidden bg-black/90 border-b border-white/10 overflow-y-auto max-h-[50vh] z-20">
+                        <div className="p-4">
                             <FilterSidebar
-                                onGenreSelect={handleGenreSelect}
-                                onFilterSelect={handleFilterSelect}
+                                onGenreSelect={(genre) => {
+                                    handleGenreSelect(genre)
+                                    setShowSidebarMobile(false)
+                                }}
+                                onFilterSelect={(filter) => {
+                                    handleFilterSelect(filter)
+                                    setShowSidebarMobile(false)
+                                }}
                                 activeGenre={activeGenre}
                                 activeFilter={activeFilter}
                             />
                         </div>
+                    </div>
+                )}
+            </div>
 
-                        {/* Contenido SCROLLEABLE */}
-                        <div className="flex-1 overflow-y-auto pt-8">
+            {/* Contenido principal */}
+            <div className="relative z-10 flex-1 flex gap-2 sm:gap-4 md:gap-6 px-2 sm:px-4 overflow-hidden pt-[4rem]">
+                    {submitted ? (
+                        <>
+                            {/* Sidebar Desktop - hidden en móviles */}
+                            <div className="hidden md:flex w-64 flex-shrink-0 sticky top-0 h-full overflow-y-auto">
+                                <FilterSidebar
+                                    onGenreSelect={handleGenreSelect}
+                                    onFilterSelect={handleFilterSelect}
+                                    activeGenre={activeGenre}
+                                    activeFilter={activeFilter}
+                                />
+                            </div>
+
+                            {/* Contenido SCROLLEABLE */}
+                            <div className="flex-1 overflow-y-auto pt-4">
                             {!isLoading && gamesToDisplay.length > 0 && (
-                                <h1 className="text-4xl font-bold text-white">{currentTitle}</h1>
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">{currentTitle}</h1>
                             )}
 
-                            <div className="flex flex-wrap gap-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
                                 {isLoading && (
                                     <>
                                         {[...Array(8)].map((_, i) => (
@@ -255,8 +352,8 @@ export const SearchPage = () => {
                     </>
                 ) : (
                     <>
-                        {/* Sidebar FIJO */}
-                        <div className="w-64 flex-shrink-0 sticky top-0 h-screen overflow-y-auto">
+                        {/* Sidebar Desktop - hidden en móviles */}
+                        <div className="hidden md:flex w-64 flex-shrink-0 sticky top-0 h-full overflow-y-auto">
                             <FilterSidebar
                                 onGenreSelect={handleGenreSelect}
                                 onFilterSelect={handleFilterSelect}
@@ -264,8 +361,9 @@ export const SearchPage = () => {
                                 activeFilter={activeFilter}
                             />
                         </div>
+                        
                         {/* Contenido SCROLLEABLE */}
-                        <div className="flex-1 overflow-y-auto pt-8">
+                        <div className="flex-1 overflow-y-auto pt-4">
                             <MainPage />
                         </div>
                     </>

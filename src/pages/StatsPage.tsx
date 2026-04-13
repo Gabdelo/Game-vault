@@ -20,11 +20,11 @@ export const StatsPage = () => {
     } = useStats(games)
 
     return (
-        <div className="pt-36 px-8 min-h-screen w-full bg-black/80">
+        <div className="pt-20 sm:pt-28 md:pt-36 px-2 sm:px-4 md:px-8 min-h-screen w-full bg-black/80 overflow-x-hidden">
             {/* Header */}
-            <div className="mb-12">
+            <div className="mb-8 sm:mb-12">
                 <Glitch trigger="loop" options={{ frames: 6, speed: 10, intensity: 10 }}>
-                <h2 className="text-4xl font-bold tracking-wide text-white uppercase">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide text-white uppercase">
                      ANALÍTICAS
                 </h2>
                 </Glitch>

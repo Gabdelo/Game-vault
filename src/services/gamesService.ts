@@ -25,7 +25,7 @@ export const deleteGameFromLibrary = async (gameId: number, userId: string) => {
 export const getGamesByIds = async (ids: number[]): Promise<GamesResponse> => {
     const query = ids.map(id => `${id}`).join(',')
     const response = await apiFetch(`/games?ids=${query}`)
-    console.log("Fetched games by IDs", ids, response)
+ 
     return response
 }
 
@@ -48,12 +48,12 @@ export const isGameInLibrary = async (gameId: number, userId: string): Promise<b
 }
 export const addGameToLibrary = async (game: Game, userId: string) => {
     // Agregar el juego a la librería
-    const libraryItem = await directus.request(createItem("library", {
+    await directus.request(createItem("library", {
         game_id: game.id,
         user_id: userId
     }));
     
-    console.log(`📚 Juego agregado a library con ID: ${libraryItem.id}`);
+
     
     // Agregar los géneros del juego a game_genres
     await addGameGenres(game);
@@ -68,7 +68,7 @@ export const getGamesInLibrary = async (userId: string) => {
             }
         }
     }))
-    console.log("Fetched library items for user", userId, libraryItems)
+   
 
     return libraryItems
 }
@@ -93,7 +93,7 @@ export const getFullLibraryGames = async (userId: string): Promise<GamesResponse
         }
     })
 
-    console.log("Fetched full library games for user", userId, gamesWithLibraryData)
+ 
 
     return {
         count: gamesResponse.count,

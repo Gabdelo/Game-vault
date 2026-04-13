@@ -66,9 +66,9 @@ export const MainPage = () => {
     }
 
     return (
-        <div className="container mx-auto px-4 flex flex-col gap-8">
+        <div className="container mx-auto px-2 sm:px-4 flex flex-col gap-4 sm:gap-6 md:gap-8">
             {/* CARRUSEL PRINCIPAL */}
-            <div className="w-full mt-[2rem]">
+            <div className="w-full mt-0 sm:mt-2 md:mt-4">
        
                 <CyberBox label={selectedGame?.name}
   cornerLines
@@ -77,7 +77,7 @@ export const MainPage = () => {
   bgColor="#0a160f"
   padding="10px">
                 {selectedGame && (
-                    <div className="relative w-full h-[500px] rounded-2xl overflow-hidden group cursor-pointer" onClick={handleGameDetail}>
+                    <div className="relative w-full h-[250px] sm:h-[350px] md:h-[500px] rounded-2xl overflow-hidden group cursor-pointer" onClick={handleGameDetail}>
                         {/* Imagen de fondo */}
                         <AnimatePresence mode="wait">
                             <motion.img
@@ -97,24 +97,24 @@ export const MainPage = () => {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent" />
 
                         {/* Contenido */}
-                        <div className="absolute inset-0 flex flex-col justify-end p-8 text-white">
+                        <div className="absolute inset-0 flex flex-col justify-end p-3 sm:p-6 md:p-8 text-white">
                             <motion.div
                                 key={`content-${selectedIdx}`}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.4 }}
-                                className="space-y-4"
+                                className="space-y-2 sm:space-y-3 md:space-y-4"
                             >
                                 <Glitch trigger="loop" options={{ frames: 6, speed: 10, intensity: 10 }}>
-                                <h2 className="text-5xl text-white  leading-tight">{selectedGame.name}</h2>
+                                <h2 className="text-2xl sm:text-3xl md:text-5xl text-white  leading-tight">{selectedGame.name}</h2>
                                 </Glitch>
                                 
                                 {/* Géneros */}
                                 {selectedGame.genres && selectedGame.genres.length > 0 && (
-                                    <div className="flex flex-wrap gap-2">
+                                    <div className="flex flex-wrap gap-1 sm:gap-2">
                                         {selectedGame.genres.map((g) => (
-                                            <span key={g.id} className="px-3 py-1 bg-white/10 text-white/80 text-xs rounded-full font-medium">
+                                            <span key={g.id} className="px-2 sm:px-3 py-0.5 sm:py-1 bg-white/10 text-white/80 text-xs rounded-full font-medium">
                                                 {g.name}
                                             </span>
                                         ))}
@@ -122,17 +122,17 @@ export const MainPage = () => {
                                 )}
 
                                 {/* Metacritic + Released */}
-                                <div className="flex items-center gap-4 text-sm">
+                                <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
                                     {selectedGame.metacritic && (
-                                        <div className="flex items-center gap-2">
-                                            <span className={`font-bold px-2 py-1 rounded ${
+                                        <div className="flex items-center gap-1 sm:gap-2">
+                                            <span className={`font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm ${
                                                 selectedGame.metacritic >= 80 ? "bg-green-500/20 text-green-400" :
                                                 selectedGame.metacritic >= 60 ? "bg-yellow-500/20 text-yellow-400" :
                                                 "bg-red-500/20 text-red-400"
                                             }`}>
                                                 {selectedGame.metacritic}
                                             </span>
-                                            <span className="text-white/60">Metacritic</span>
+                                            <span className="text-white/60 text-xs">Metacritic</span>
                                         </div>
                                     )}
                                     {selectedGame.released && (

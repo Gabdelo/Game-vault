@@ -46,19 +46,19 @@ export const FilterSidebar = ({ onGenreSelect, onFilterSelect, activeGenre, acti
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3 }}
-                className="flex flex-col gap-4 sticky top-24 pr-2"
+                className="flex flex-col gap-2 sm:gap-3 md:gap-4 sticky top-0 pr-0 md:pr-2"
             >
                 {/* Filtros rápidos */}
                 <div className="sb-panel">
-                    <h3 className="sb-heading">Filtros</h3>
-                    <div className="flex flex-col gap-2">
+                    <h3 className="sb-heading text-xs sm:text-sm">Filtros</h3>
+                    <div className="flex flex-col gap-1 sm:gap-2">
                         {filters.map((filter) => (
                             <motion.button
                                 key={filter.id}
                                 onClick={() => onFilterSelect?.(filter.id)}
                                 whileHover={{ x: 3 }}
                                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                                className={`sb-filter-btn ${activeFilter === filter.id ? 'active' : ''}`}
+                                className={`sb-filter-btn text-xs sm:text-sm py-1 sm:py-2 ${activeFilter === filter.id ? 'active' : ''}`}
                             >
                                 <span className="sb-btn-icon">{filter.icon}</span>
                                 {filter.label}
@@ -69,15 +69,15 @@ export const FilterSidebar = ({ onGenreSelect, onFilterSelect, activeGenre, acti
 
                 {/* Géneros */}
                 <div className="sb-panel">
-                    <h3 className="sb-heading">Géneros</h3>
-                    <div className="sb-genre-list">
+                    <h3 className="sb-heading text-xs sm:text-sm">Géneros</h3>
+                    <div className="sb-genre-list gap-1 sm:gap-2">
                         {genres.map((genre) => (
                             <motion.button
                                 key={genre.slug}
                                 onClick={() => onGenreSelect?.(genre.slug)}
                                 whileHover={{ x: 3 }}
                                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                                className={`sb-genre-btn ${activeGenre === genre.slug ? 'active' : ''}`}
+                                className={`sb-genre-btn text-xs sm:text-sm py-1 sm:py-2 px-2 sm:px-3 ${activeGenre === genre.slug ? 'active' : ''}`}
                             >
                                 {genre.name}
                             </motion.button>
@@ -95,7 +95,7 @@ export const FilterSidebar = ({ onGenreSelect, onFilterSelect, activeGenre, acti
                             onGenreSelect?.('')
                             onFilterSelect?.('')
                         }}
-                        className="sb-clear-btn"
+                        className="sb-clear-btn text-xs sm:text-sm"
                     >
                         <span style={{ fontSize: '10px' }}>✕</span>
                         Limpiar filtros

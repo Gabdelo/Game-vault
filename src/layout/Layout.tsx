@@ -3,18 +3,18 @@ import { Navbar } from "./Navbar"
 
 export const Layout = () => {
     return (
-        <div className="flex h-screen">
+        <div className="flex h-screen overflow-x-hidden">
             {/* Sidebar */}
             
             
-            <div className="flex-1 flex flex-col relative">
+            <div className="flex-1 flex flex-col relative overflow-x-hidden">
                 {/* Fixed Navbar */}
                 <div className="fixed top-0 right-0 left-0 z-40">
                     <Navbar />
                 </div>
                 
                 {/* Content with top padding for navbar */}
-                <div className="flex-1 overflow-auto ">
+                <div className="flex-1 overflow-auto overflow-x-hidden">
                     <Outlet />
                 </div>
             </div>

@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/authStore";
 import { useState, useRef, useEffect } from "react";
 import { useSearch } from "../hooks/useSearch";
 import { GameSearch } from "@/components/Search";
-import { FiBook, FiUser, FiLogOut } from "react-icons/fi";
+import { FiBook, FiUser, FiLogOut, FiMenu, FiX } from "react-icons/fi";
 import { navbarStyles } from "@/styles/navbarStyle";
 import { useToast } from "@/components/ui/CyberToast";
 import '../styles/styles.css'
@@ -26,6 +26,7 @@ export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
     const [showProfileMenu, setShowProfileMenu] = useState(false)
     const profileMenuRef = useRef<HTMLDivElement>(null)
     const { games, loading } = useSearch(query)
+    const [showMobileMenu, setShowMobileMenu] = useState(false)
     
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -73,20 +74,20 @@ export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
             <style>{navbarStyles}</style>
           
         
-            <nav className=" nav-cyber text-white p-2 relative z-10 rounded-br-[3rem] rounded-bl-[3rem]">
-                <div className="container mx-auto flex justify-between items-center space-x-4" style={{ position: 'relative', zIndex: 1 }}>
+            <nav className="nav-cyber text-white p-3 sm:p-4 relative z-10 rounded-br-[1rem] rounded-bl-[1rem]">
+                <div className="flex justify-between items-center gap-2 sm:gap-4 px-2 sm:px-0" style={{ position: 'relative', zIndex: 1 }}>
 
                     {/* Logo */}
                     <button onClick={handleLogoClick} className="flex-shrink-0 bg-none border-none cursor-pointer p-0">
                         <img
                             src="/logo4.webp"
                             alt="GameVault"
-                            className="h-10 w-auto nav-logo-img"
+                            className="h-8 sm:h-10 w-auto nav-logo-img"
                         />
                     </button>
 
-                    {/* Buscador */}
-                    <div className="flex-1 max-w-md nav-search-wrapper">
+                    {/* Buscador - escondido en móviles */}
+                    <div className="hidden md:flex flex-1 max-w-md nav-search-wrapper">
                         <GameSearch
                             value={query}
                             onChange={handleInputChange}
@@ -131,8 +132,8 @@ export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
                         )}
                     </div>
 
-                    {/* Auth Section */}
-                    <div className="flex items-center space-x-4">
+                    {/* Auth Section - Desktop */}
+                    <div className="hidden md:flex items-center gap-2 sm:gap-4">
                         {!isAuthenticated && (
                             <>
                                 <Link to="/welcome" state={{ isInLogin: true }} className="nav-auth-link">
@@ -179,7 +180,46 @@ export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
                             </>
                         )}
                     </div>
+
+                    {/* Spacer - pushes mobile menu to the right */}
+                    <div className="flex-1 md:hidden" />
+
+                    {/* Mobile Menu Button */}
+                    <button 
+                        onClick={() => setShowMobileMenu(!showMobileMenu)}
+                        className="md:hidden flex-shrink-0 text-white p-2 hover:text-yellow-400 transition-colors"
+                    >
+                        {showMobileMenu ? <FiX size={24} /> : <FiMenu size={24} />}
+                    </button>
                 </div>
+
+                {/* Mobile Menu */}
+                {showMobileMenu && (
+                    <div className="md:hidden mt-4 pb-4 border-t border-white/10">
+                        {!isAuthenticated && (
+                            <>
+                                <Link to="/welcome" state={{ isInLogin: true }} className="block py-2 px-4 hover:bg-white/10 transition-colors">
+                                    Iniciar Sesión
+                                </Link>
+                                <Link to="/welcome" state={{ isInLogin: false }} className="block py-2 px-4 hover:bg-white/10 transition-colors">
+                                    Registrarse
+                                </Link>
+                            </>
+                        )}
+                        {isAuthenticated && (
+                            <>
+                                <Link to="/library" className="flex items-center gap-2 py-2 px-4 hover:bg-white/10 transition-colors">
+                                    <FiBook size={16} />
+                                    Biblioteca
+                                </Link>
+                                <button onClick={handleLogout} className="flex items-center gap-2 w-full py-2 px-4 hover:bg-red-500/20 transition-colors text-left">
+                                    <FiLogOut size={16} />
+                                    Cerrar Sesión
+                                </button>
+                            </>
+                        )}
+                    </div>
+                )}
             </nav>
            
         </>

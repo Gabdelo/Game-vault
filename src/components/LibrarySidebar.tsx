@@ -10,6 +10,7 @@ type Props = {
     genres: any[]
     selectedGenre: number | null
     onGenreChange: (value: number | null) => void
+    hideSearch?: boolean
 }
 
 export const LibrarySidebar = ({
@@ -22,12 +23,14 @@ export const LibrarySidebar = ({
     genres,
     selectedGenre,
     onGenreChange,
+    hideSearch = false,
 }: Props) => {
     return (
         <>
             <style>{filterStyles}</style>
             <div className=" w-64 flex-shrink-0">
                 {/* Buscador */}
+              {!hideSearch && (
               <div className="mb-6">
   <div className="relative">
     <input
@@ -56,6 +59,7 @@ export const LibrarySidebar = ({
     />
   </div>
 </div>
+              )}
 
                 {/* Ordenamiento */}
                 <div className="sb-panel mb-6">
