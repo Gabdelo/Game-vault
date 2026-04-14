@@ -10,8 +10,12 @@ export const cardStyles = `
     display: flex;
     flex-direction: column;
     border-radius: 10px;
-    width: 22rem;
+    width: 19rem;
+    min-width: 10rem;
+    max-width: 20rem;
     height: 420px;
+    margin: 0.5rem;
+    
   }
 
   /* Línea de acento superior */
@@ -280,5 +284,68 @@ export const cardStyles = `
 
   .cp-card__add-btn:active {
     transform: scale(0.97);
+  }
+
+  /* ── Responsive Sizes ── */
+  @media (max-width: 840px) {
+    .cp-card {
+      width: 100%;
+      max-width: 100%;
+      height: 280px;
+    }
+    
+    .cp-card__title {
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+
+    .cp-card__description {
+      font-size: 0.8rem;
+      max-height: 2em;
+    }
+
+    .cp-card__meta {
+      font-size: 0.75rem;
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .cp-card {
+      width: 100%;
+      max-width: 100%;
+      height: 350px;
+    }
+
+    .cp-card__title {
+      font-size: 1rem;
+    }
+
+    .cp-card__description {
+      font-size: 0.85rem;
+      max-height: 2.5em;
+    }
+  }
+
+  @media (min-width: 1025px) {
+    .cp-card {
+      width: 14rem;
+      max-width: 18rem;
+      height: 420px;
+    }
+
+    .cp-card__title {
+      font-size: 1.1rem;
+    }
+
+    .cp-card__description {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (min-width: 1530px) {
+    .cp-card {
+      width: 20rem;
+      max-width: 20rem;
+    }
   }
 `

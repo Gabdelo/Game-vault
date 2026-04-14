@@ -1,6 +1,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { HackerText } from "./ui/HackerText"
 
 // ─── Animated left-border field ───────────────────────────────────────────────
 
@@ -98,16 +99,16 @@ export default function LoginForm({
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
         />
         <span className="text-[10px] tracking-[0.2em] uppercase text-zinc-100">
-          GAME VAULT — AUTH SYSTEM
+          <HackerText text="GAME VAULT — AUTH SYSTEM" />
         </span>
       </div>
 
       {/* Heading */}
       <div className="mb-8">
         <h1 className="text-2xl font-black tracking-tight text-zinc-100 leading-none">
-          INICIA
+          <HackerText text="INICIAR SESIÓN" />
           <br />
-          <span className="text-[#F2FF00]">SESIÓN</span>
+          <span className="text-[#F2FF00]"><HackerText text="SESIÓN" /></span>
         </h1>
         <p className="mt-2 text-[11px] text-zinc-100 tracking-widest uppercase">
           Introduce tus credenciales para continuar
@@ -153,7 +154,7 @@ export default function LoginForm({
             whileHover={{ translateX: "200%" }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
           />
-          <span className="relative z-10">INICIAR SESIÓN</span>
+          <span className="relative z-10"><HackerText text="INICIAR SESIÓN" /></span>
         </motion.button>
 
         {/* Error — same conditional as original */}
@@ -173,12 +174,12 @@ export default function LoginForm({
 
       {/* Footer — onSwitch untouched */}
       <p className="mt-7 text-center text-[10px] text-zinc-100 tracking-widest uppercase">
-        ¿No tienes cuenta?{" "}
+        <HackerText text="¿No tienes cuenta?" />{" "}
         <span
           onClick={onSwitch}
           className="text-zinc-400 cursor-pointer transition-colors duration-150 underline underline-offset-2 hover:text-[#F2FF00]"
         >
-          Regístrate
+          <HackerText text="Regístrate" />
         </span>
       </p>
       </div>

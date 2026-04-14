@@ -25,10 +25,36 @@ export const LibrarySidebar = ({
     onGenreChange,
     hideSearch = false,
 }: Props) => {
+    const scrollbarStyles = `
+        #library-sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #library-sidebar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        
+        #library-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(247, 255, 0, 0.8);
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+        
+        #library-sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(247, 255, 0, 1);
+        }
+        
+        #library-sidebar {
+            scrollbar-color: rgba(247, 255, 0, 0.8) rgba(0, 0, 0, 0.3);
+        }
+    `
+    
     return (
         <>
             <style>{filterStyles}</style>
-            <div className=" w-64 flex-shrink-0">
+            <style>{scrollbarStyles}</style>
+            <div id="library-sidebar" className="w-64 flex-shrink-0 overflow-y-auto max-h-full">
                 {/* Buscador */}
               {!hideSearch && (
               <div className="mb-6">

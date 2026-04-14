@@ -74,7 +74,7 @@ export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
             <style>{navbarStyles}</style>
           
         
-            <nav className="nav-cyber text-white p-3 sm:p-4 relative z-10 rounded-br-[1rem] rounded-bl-[1rem]">
+            <nav className="nav-cyber text-white p-3 sm:p-4 relative z-10 rounded-br-[1rem] rounded-bl-[1rem] px-5 sm:px-8 md:px-12">
                 <div className="flex justify-between items-center gap-2 sm:gap-4 px-2 sm:px-0" style={{ position: 'relative', zIndex: 1 }}>
 
                     {/* Logo */}
@@ -162,7 +162,7 @@ export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
                                     <CyberButton onClick={() => setShowProfileMenu(!showProfileMenu)} variant="secondary" accentColor="#00FFFF">
                                   
                                         <FiUser size={16} />
-                                        <span>{user?.email?.split('@')[0]}</span>
+                                        <span>{user?.first_name}</span>
                                         <span style={{ opacity: 0.4, fontSize: '8px' }}>▼</span>
                                     
                                     </CyberButton>

@@ -8,6 +8,7 @@ import { getGamesInLibrary } from "@/services/gamesService";
 import { Glitch } from "@/components/ui/Glitch";
 import { CyberpunkButton } from "@/components/ui/Button";
 import {CyberBox} from "@/components/ui/CyberBox";
+import { HackerText } from "@/components/ui/HackerText";
 
 export const MainPage = () => {
 
@@ -59,8 +60,28 @@ export const MainPage = () => {
 
     if (loading) {
         return (
-            <div className="container mx-auto px-4 py-8 h-screen flex items-center justify-center">
-                <div className="text-white/50">Cargando juegos...</div>
+            <div className="container mx-auto px-2 sm:px-4 flex flex-col gap-4 sm:gap-6 md:gap-8">
+                {/* Skeleton Carrusel Principal */}
+                <div className="w-full mt-0 sm:mt-2 md:mt-4">
+                    <div className="relative w-full h-[250px] sm:h-[350px] md:h-[500px] rounded-2xl overflow-hidden bg-gradient-to-r from-black/50 via-black/30 to-black/50 animate-pulse border border-yellow-400/20" />
+                </div>
+
+                {/* Skeleton Carruseles */}
+                <div className="w-full space-y-8">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="space-y-3">
+                            <div className="h-6 w-32 bg-gradient-to-r from-black/50 to-black/30 rounded animate-pulse" />
+                            <div className="flex gap-3 overflow-hidden">
+                                {[1, 2, 3, 4, 5].map((j) => (
+                                    <div
+                                        key={j}
+                                        className="w-32 sm:w-40 h-44 sm:h-56 flex-shrink-0 bg-gradient-to-r from-black/50 via-black/30 to-black/50 rounded-lg animate-pulse border border-yellow-400/10"
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         )
     }
@@ -107,7 +128,7 @@ export const MainPage = () => {
                                 className="space-y-2 sm:space-y-3 md:space-y-4"
                             >
                                 <Glitch trigger="loop" options={{ frames: 6, speed: 10, intensity: 10 }}>
-                                <h2 className="text-2xl sm:text-3xl md:text-5xl text-white  leading-tight">{selectedGame.name}</h2>
+                                <h2 className="text-2xl sm:text-3xl md:text-5xl text-white  leading-tight"><HackerText text={selectedGame.name} /></h2>
                                 </Glitch>
                                 
                                 {/* Géneros */}

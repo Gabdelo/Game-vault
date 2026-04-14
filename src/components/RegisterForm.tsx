@@ -1,6 +1,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { HackerText } from "./ui/HackerText"
 
 // ─── Field ────────────────────────────────────────────────────────────────────
 
@@ -97,19 +98,19 @@ export default function RegisterForm({
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
         />
         <span className="text-[10px] tracking-[0.2em] uppercase text-zinc-100">
-          GAME VAULT — NUEVO JUGADOR
+          <HackerText text="GAME VAULT — NUEVO JUGADOR" />
         </span>
       </div>
 
       {/* Heading */}
       <div className="mb-8">
         <h1 className="text-2xl font-black tracking-tight text-zinc-100 leading-none">
-          ÚNETE AL
+          <HackerText text="ÚNETE AL" />
           <br />
-          <span className="text-[#F2FF00]">VAULT</span>
+          <span className="text-[#F2FF00]"><HackerText text="VAULT" /></span>
         </h1>
         <p className="mt-2 text-[11px] text-zinc-100 tracking-widest uppercase">
-          Crea tu cuenta y empieza a jugar
+          <HackerText text="Crea tu cuenta y empieza a jugar" />
         </p>
       </div>
 
@@ -161,7 +162,7 @@ export default function RegisterForm({
             whileHover={{ translateX: "200%" }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
           />
-          <span className="relative z-10">REGISTRARSE</span>
+          <span className="relative z-10"><HackerText text="REGISTRARSE" /></span>
         </motion.button>
 
         {/* Error — same conditional as original */}
@@ -181,12 +182,12 @@ export default function RegisterForm({
 
       {/* Footer — onSwitch untouched */}
       <p className="mt-7 text-center text-[10px] text-zinc-100 tracking-widest uppercase">
-        ¿Ya tienes cuenta?{" "}
+        <HackerText text="¿Ya tienes cuenta?" />{" "}
         <span
           onClick={onSwitch}
           className="text-zinc-400 cursor-pointer transition-colors duration-150 underline underline-offset-2 hover:text-[#F2FF00]"
         >
-          Inicia sesión
+          <HackerText text="Inicia sesión" />
         </span>
       </p>
       </div>

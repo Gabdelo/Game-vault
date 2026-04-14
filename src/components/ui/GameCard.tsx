@@ -38,6 +38,7 @@ export default function GameCard({ game, userId, isInLibrary, onAddToLibrary }: 
       setInLibrary(false)
     }
   }
+  
 
   const metacritic = game.metacritic ?? 0
   const genres = game.genres?.map(g => g.name) || []

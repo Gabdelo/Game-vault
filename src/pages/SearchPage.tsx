@@ -195,13 +195,13 @@ export const SearchPage = () => {
     }
 
     return (
-        <div className="h-screen flex flex-col relative overflow-hidden">
+        <div className="min-h-screen flex flex-col relative">
             {/* Background con blur */}
             
             <div
                 className="absolute inset-0"
                 style={{
-                    backgroundImage: "url('/')",
+                    backgroundImage: "url('/blackbg.jpg')",
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundAttachment: 'fixed',
@@ -296,9 +296,9 @@ export const SearchPage = () => {
             </div>
 
             {/* Contenido principal */}
-            <div className="relative z-10 flex-1 flex gap-2 sm:gap-4 md:gap-6 px-2 sm:px-4 overflow-hidden pt-[4rem]">
+            <div className="relative z-10 flex-1 flex gap-2 sm:gap-4 md:gap-6 px-2 sm:px-4 pt-[4rem] w-full min-w-0">
                     {submitted ? (
-                        <>
+                        <div className="w-full flex gap-2 sm:gap-4 md:gap-6">
                             {/* Sidebar Desktop - hidden en móviles */}
                             <div className="hidden md:flex w-64 flex-shrink-0 sticky top-0 h-full overflow-y-auto">
                                 <FilterSidebar
@@ -310,64 +310,64 @@ export const SearchPage = () => {
                             </div>
 
                             {/* Contenido SCROLLEABLE */}
-                            <div className="flex-1 overflow-y-auto pt-4">
-                            {!isLoading && gamesToDisplay.length > 0 && (
-                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">{currentTitle}</h1>
-                            )}
-
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
-                                {isLoading && (
-                                    <>
-                                        {[...Array(8)].map((_, i) => (
-                                            <GameCardSkeleton key={`skeleton-${i}`} />
-                                        ))}
-                                    </>
+                            <div className="flex-1 overflow-y-auto overflow-x-hidden pt-4 w-full min-w-0 px-1 sm:px-2 md:px-4">
+                                {!isLoading && gamesToDisplay.length > 0 && (
+                                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">{currentTitle}</h1>
                                 )}
 
-                                {!isLoading && gamesToDisplay.map(game => (
-                                    <GameCard
-                                        key={game.id}
-                                        game={game}
-                                        userId={user?.id}
-                                        isInLibrary={libraryGameIds.has(game.id)}
-                                        onAddToLibrary={() => setLibraryGameIds(new Set([...libraryGameIds, game.id]))}
+                                <div className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 sm:gap-2 md:gap-8">
+                                    {isLoading && (
+                                        <>
+                                            {[...Array(8)].map((_, i) => (
+                                                <GameCardSkeleton key={`skeleton-${i}`} />
+                                            ))}
+                                        </>
+                                    )}
+
+                                    {!isLoading && gamesToDisplay.map(game => (
+                                        <GameCard 
+                                            key={game.id}
+                                            game={game}
+                                            userId={user?.id}
+                                            isInLibrary={libraryGameIds.has(game.id)}
+                                            onAddToLibrary={() => setLibraryGameIds(new Set([...libraryGameIds, game.id]))}
+                                        />
+                                    ))}
+                                </div>
+
+                                {!isLoading && gamesToDisplay.length === 0 && (
+                                    <p className="text-center text-gray-400 mt-4">No se encontraron juegos</p>
+                                )}
+
+                                {/* Paginación - para búsquedas y filtros */}
+                                {submitted && totalPages > 1 && (
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        onPageChange={handlePageChange}
+                                        isLoading={filterLoading}
                                     />
-                                ))}
+                                )}
                             </div>
-
-                            {!isLoading && gamesToDisplay.length === 0 && (
-                                <p className="text-center text-gray-400 mt-4">No se encontraron juegos</p>
-                            )}
-
-                            {/* Paginación - para búsquedas y filtros */}
-                            {submitted && totalPages > 1 && (
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onPageChange={handlePageChange}
-                                    isLoading={filterLoading}
+                        </div>
+                    ) : (
+                        <div className="w-full flex gap-2 sm:gap-4 md:gap-6">
+                            {/* Sidebar Desktop - hidden en móviles */}
+                            <div className="hidden md:flex w-64 flex-shrink-0 sticky top-0 h-full overflow-y-auto">
+                                <FilterSidebar
+                                    onGenreSelect={handleGenreSelect}
+                                    onFilterSelect={handleFilterSelect}
+                                    activeGenre={activeGenre}
+                                    activeFilter={activeFilter}
                                 />
-                            )}
+                            </div>
+                            
+                            {/* Contenido SCROLLEABLE */}
+                            <div className="flex-1 overflow-y-auto overflow-x-hidden pt-4 w-full min-w-0 px-1 sm:px-2">
+                                <MainPage />
+                            </div>
                         </div>
-                    </>
-                ) : (
-                    <>
-                        {/* Sidebar Desktop - hidden en móviles */}
-                        <div className="hidden md:flex w-64 flex-shrink-0 sticky top-0 h-full overflow-y-auto">
-                            <FilterSidebar
-                                onGenreSelect={handleGenreSelect}
-                                onFilterSelect={handleFilterSelect}
-                                activeGenre={activeGenre}
-                                activeFilter={activeFilter}
-                            />
-                        </div>
-                        
-                        {/* Contenido SCROLLEABLE */}
-                        <div className="flex-1 overflow-y-auto pt-4">
-                            <MainPage />
-                        </div>
-                    </>
-                )}
+                    )}
             </div>
         </div>
     )

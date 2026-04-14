@@ -9,6 +9,7 @@ import { LibrarySidebar } from "@/components/LibrarySidebar"
 import { LibraryStatusMenu } from "@/components/LibraryStatusMenu"
 import CyberButton from "@/components/ui/CyberButton"
 import GameCardSkeleton from "@/components/ui/GameCardSkeleton"
+import { HackerText } from "@/components/ui/HackerText"
 
 export const LibraryPage = () => {
     const user = useAuthStore(state => state.user)
@@ -23,6 +24,7 @@ export const LibraryPage = () => {
     const [genres, setGenres] = useState<any[]>([])
     const [gameGenres, setGameGenres] = useState<Map<number, number[]>>(new Map())
     const [showSidebarMobile, setShowSidebarMobile] = useState(false)
+    const [hoverGameImage, setHoverGameImage] = useState<string | null>(null)
     // Sincronizar gamesList cuando games carga
     useEffect(() => {
         setGamesList(games)
@@ -115,9 +117,20 @@ export const LibraryPage = () => {
         }
     }
     return (
-        <div className="h-screen flex flex-col relative overflow-hidden">
+        <div className="h-screen flex flex-col relative overflow-hidden pt-8 px-2">
             {/* Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-black via-black/90 to-black/80 z-0"></div>
+            <div 
+                className="absolute inset-0 z-0 transition-all duration-300"
+                style={{
+                    backgroundImage: hoverGameImage 
+                        ? `url(${hoverGameImage})` 
+                        : 'url(/blackbg.jpg)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    filter: 'blur(8px)',
+                }}
+            ></div>
+            <div className="absolute inset-0 bg-black/60 z-0"></div>
 
             {/* TOP SECTION: Botón de filtros + Buscador (mobile) */}
             <div className="relative z-20 pt-[5rem]">
@@ -144,7 +157,7 @@ export const LibraryPage = () => {
 
                 {/* Dropdown Filtros Mobile */}
                 {showSidebarMobile && (
-                    <div className="md:hidden bg-black/90 border-b border-white/10 overflow-y-auto max-h-[50vh] z-20">
+                    <div className="md:hidden bg-black/90 border-b border-white/10 overflow-y-auto max-h-[50vh] z-20 ">
                         <div className="p-4">
                             <LibrarySidebar
                                 searchQuery=""
@@ -169,7 +182,7 @@ export const LibraryPage = () => {
                 <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-8 px-2 sm:px-4 md:px-8 pt-4">
                     <div>
                         <h2 className="text-2xl sm:text-4xl font-bold tracking-wide text-white">
-                            TU BIBLIOTECA
+                            <HackerText text="BIBLIOTECA" />
                         </h2>
                         <p className="text-gray-400 mt-1 text-xs sm:text-sm">
                             {gamesList.length > 0
@@ -205,7 +218,7 @@ export const LibraryPage = () => {
                 {!loading && gamesList.length > 0 && (
                     <div className="flex gap-4 md:gap-8 overflow-hidden flex-1">
                         {/* Sidebar Desktop - hidden en móviles */}
-                        <div className="hidden md:block w-64 flex-shrink-0 sticky top-0 h-full overflow-y-auto">
+                        <div className="hidden md:block w-64 flex-shrink-0 sticky top-0 h-full overflow-y-auto min-w-[17rem]">
                             <LibrarySidebar
                                 searchQuery={searchQuery}
                                 onSearchChange={setSearchQuery}
@@ -231,7 +244,11 @@ export const LibraryPage = () => {
                                 {filteredGames.map(game => (
                                     <Link key={game.id} to={`/game/${game.id}`} state={{ game }}>
 
-                                        <div className="group cursor-pointer flex flex-col gap-2">
+                                        <div 
+                                            className="group cursor-pointer flex flex-col gap-2"
+                                            onMouseEnter={() => setHoverGameImage(game.background_image || null)}
+                                            onMouseLeave={() => setHoverGameImage(null)}
+                                        >
                                             {/* Cover image */}
                                             <div className="relative w-full aspect-[3/4] overflow-hidden rounded-xl">
                                                 <img

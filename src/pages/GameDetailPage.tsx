@@ -5,18 +5,21 @@ import { getGameDetail, updateGameNote, updateGameRating, updateGameStatus, addG
 import { useAuthStore } from '@/store/authStore'
 import { useToast } from '@/components/ui/CyberToast'
 import type { Game } from '@/types/game'
+import { Glitch } from '@/components/ui/Glitch'
 
 export const GameDetailPage = () => {
     const { game } = useLocation().state
     const user = useAuthStore(state => state.user)
     const { toast } = useToast()
-    const [gameDetail, setGameDetail] = useState<Game>(game)
+    // Limpiar los campos personales del objeto game para que no interfieran
+    const cleanedGame = { ...game, rating: undefined, note: undefined, status: undefined }
+    const [gameDetail, setGameDetail] = useState<Game>(cleanedGame)
     const [editNote, setEditNote] = useState(false)
     const [editRating, setEditRating] = useState(false)
     const [editStatus, setEditStatus] = useState(false)
-    const [noteValue, setNoteValue] = useState(game.note || "")
-    const [ratingValue, setRatingValue] = useState(game.rating || 0)
-    const [statusValue, setStatusValue] = useState<'playing' | 'completed' | 'dropped' | 'wishlist' | null>(game.status || null)
+    const [noteValue, setNoteValue] = useState("")
+    const [ratingValue, setRatingValue] = useState(0)
+    const [statusValue, setStatusValue] = useState<'playing' | 'completed' | 'dropped' | 'wishlist' | null>(null)
     const [isInLibrary, setIsInLibrary] = useState(false)
     const [addingToLibrary, setAddingToLibrary] = useState(false)
     const [deletingFromLibrary, setDeletingFromLibrary] = useState(false)
@@ -79,6 +82,17 @@ export const GameDetailPage = () => {
         setAddingToLibrary(true)
         try {
             await addGameToLibrary(game, user.id)
+            // Resetear los valores personales después de agregar
+            setNoteValue("")
+            setRatingValue(0)
+            setStatusValue(null)
+            // Actualizar gameDetail para no mostrar datos del juego original
+            setGameDetail({
+                ...gameDetail,
+                note: null,
+                rating: null,
+                status: null
+            })
             setIsInLibrary(true)
             toast({
                 variant: 'success',
@@ -172,6 +186,21 @@ export const GameDetailPage = () => {
                             )}
 
                             {/* Géneros */}
+                            
+
+                            {/* Título */}
+                            
+                            <motion.h1
+                                className="text-5xl lg:text-7xl font-black tracking-tight leading-none text-white mt-20"
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.2 }}
+                            >
+                                <Glitch trigger="loop" options={{ frames: 6, speed: 10, intensity: 10 }}>
+                                {gameDetail.name}
+                                 </Glitch>
+                            </motion.h1>
+                            {/* Géneros */}
                             {gameDetail.genres?.length > 0 && (
                                 <div className="flex flex-wrap gap-2">
                                     {gameDetail.genres.map((g) => (
@@ -181,16 +210,6 @@ export const GameDetailPage = () => {
                                     ))}
                                 </div>
                             )}
-
-                            {/* Título */}
-                            <motion.h1
-                                className="text-5xl lg:text-7xl font-black tracking-tight leading-none text-white"
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.8, delay: 0.2 }}
-                            >
-                                {gameDetail.name}
-                            </motion.h1>
 
                             {/* Métricas inline */}
                             <motion.div
@@ -208,7 +227,7 @@ export const GameDetailPage = () => {
                                         }`}>
                                             {gameDetail.metacritic}
                                         </span>
-                                        <span className="text-xs text-white/40">Metacritic</span>
+                                        <span className="text-xs text-yellow/40">Metacritic</span>
                                     </div>
                                 )}
                                 {gameDetail.released && (
@@ -324,7 +343,7 @@ export const GameDetailPage = () => {
                     {/* Metacritic grande */}
                     {gameDetail.metacritic != null && (
                         <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 flex flex-col gap-1">
-                            <span className="text-[11px] text-white/40 uppercase tracking-widest font-medium">Metacritic</span>
+                            <span className="text-[11px] text-blue-300 uppercase tracking-widest font-medium">Metacritic</span>
                             <span className={`text-4xl font-black ${
                                 gameDetail.metacritic >= 80 ? "text-green-400" :
                                 gameDetail.metacritic >= 60 ? "text-yellow-400" : "text-red-400"
@@ -339,7 +358,7 @@ export const GameDetailPage = () => {
                             className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 flex flex-col gap-1 cursor-pointer hover:bg-white/[0.06] transition-all group"
                             onClick={() => setEditRating(true)}
                         >
-                            <span className="text-[11px] text-white/40 uppercase tracking-widest font-medium">Mi Rating</span>
+                            <span className="text-[11px] text-blue-300 uppercase tracking-widest font-medium">Mi Rating</span>
                             {!editRating ? (
                                 <>
                                     <span className="text-4xl font-black text-amber-400">
@@ -366,7 +385,7 @@ export const GameDetailPage = () => {
 
                     {/* Fecha lanzamiento */}
                     <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 flex flex-col gap-1">
-                        <span className="text-[11px] text-white/40 uppercase tracking-widest font-medium">Lanzamiento</span>
+                        <span className="text-[11px] text-blue-300 uppercase tracking-widest font-medium">Lanzamiento</span>
                         <span className="text-lg font-bold text-white/90">
                             {gameDetail.released
                                 ? new Date(gameDetail.released).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" })
@@ -377,7 +396,7 @@ export const GameDetailPage = () => {
                     {/* Playtime */}
                     {gameDetail.playtime != null && gameDetail.playtime > 0 && (
                         <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 flex flex-col gap-1">
-                            <span className="text-[11px] text-white/40 uppercase tracking-widest font-medium">Tiempo medio</span>
+                            <span className="text-[11px] text-blue-300 uppercase tracking-widest font-medium">Tiempo medio</span>
                             <span className="text-4xl font-black text-white/90">{gameDetail.playtime}<span className="text-lg text-white/30 font-normal"> h</span></span>
                         </div>
                     )}
@@ -392,7 +411,7 @@ export const GameDetailPage = () => {
                         {/* Opiniones / Ratings bar */}
                         {gameDetail.ratings && gameDetail.ratings.length > 0 && (
                             <section>
-                                <h2 className="text-xs text-white/40 uppercase tracking-widest font-medium mb-4">
+                                <h2 className="text-xs text-yellow-300 uppercase tracking-widest font-medium mb-4">
                                     Opiniones de la comunidad
                                     {gameDetail.ratings_count && <span className="text-white/25 ml-2">· {gameDetail.ratings_count.toLocaleString()} votos</span>}
                                 </h2>
@@ -426,7 +445,7 @@ export const GameDetailPage = () => {
                         {/* Nota personal */}
                         {user?.id && isInLibrary && (
                             <section>
-                                <h2 className="text-xs text-white/40 uppercase tracking-widest font-medium mb-3">Tu nota personal</h2>
+                                <h2 className="text-xs text-yellow-300 uppercase tracking-widest font-medium mb-3">Tu nota personal</h2>
                                 <div
                                     className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 cursor-pointer hover:bg-white/[0.05] hover:border-white/10 transition-all min-h-[80px]"
                                     onClick={() => setEditNote(true)}
@@ -453,7 +472,7 @@ export const GameDetailPage = () => {
                         {/* Screenshots */}
                         {gameDetail.short_screenshots && gameDetail.short_screenshots.length > 1 && (
                             <section>
-                                <h2 className="text-xs text-white/40 uppercase tracking-widest font-medium mb-3">Capturas</h2>
+                                <h2 className="text-xs text-yellow-300 uppercase tracking-widest font-medium mb-3">Capturas</h2>
                                 <div className="grid grid-cols-3 gap-2">
                                     {gameDetail.short_screenshots.slice(1, 7).map((s) => (
                                         <motion.img
@@ -471,7 +490,7 @@ export const GameDetailPage = () => {
                         {/* Tags */}
                         {(gameDetail.tags?.length ?? 0) > 0 && (
                             <section>
-                                <h2 className="text-xs text-white/40 uppercase tracking-widest font-medium mb-3">Tags</h2>
+                                <h2 className="text-xs text-yellow-300 uppercase tracking-widest font-medium mb-3">Tags</h2>
                                 <div className="flex flex-wrap gap-2">
                                     {gameDetail.tags?.filter(t => t.language === "eng").slice(0, 14).map((t) => (
                                         <span key={t.id} className="px-3 py-1 bg-white/[0.04] text-white/50 text-xs rounded-full border border-white/[0.07] hover:text-white/70 hover:bg-white/[0.07] transition-all cursor-default">
