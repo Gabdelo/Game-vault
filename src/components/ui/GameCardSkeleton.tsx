@@ -17,18 +17,18 @@ export default function GameCardSkeleton() {
         {/* Body Section Skeleton */}
         <div className="cp-card__body">
           {/* Title Skeleton */}
-          <div className="h-6 bg-gray-700 animate-pulse rounded mb-3" />
+          <div className="h-6 bg-gray-700 animate-pulse  mb-3" />
 
           {/* Genres Skeleton */}
           <div className="cp-card__genres mb-3">
-            <div className="h-5 bg-gray-700 animate-pulse rounded w-16" />
-            <div className="h-5 bg-gray-700 animate-pulse rounded w-16" />
+            <div className="h-5 bg-gray-700 animate-pulse w-16" />
+            <div className="h-5 bg-gray-700 animate-pulse w-16" />
           </div>
 
           {/* Meta Info Skeleton */}
           <div className="cp-card__meta mb-3">
-            <div className="h-4 bg-gray-700 animate-pulse rounded w-24" />
-            <div className="h-4 bg-gray-700 animate-pulse rounded w-20 mt-2" />
+            <div className="h-4 bg-gray-700 animate-pulse w-24" />
+            <div className="h-4 bg-gray-700 animate-pulse w-20 mt-2" />
           </div>
 
           {/* Divider */}
@@ -36,7 +36,7 @@ export default function GameCardSkeleton() {
 
           {/* Button Skeleton */}
           <div className="cp-card__footer">
-            <div className="h-10 bg-gray-700 animate-pulse rounded" />
+            <div className="h-10 bg-gray-700 animate-pulse" />
           </div>
         </div>
       </div>

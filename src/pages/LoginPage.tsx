@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { useToast } from "../components/ui/CyberToast";
-import LoginForm from "@/components/LoginForm";
+import LoginForm from "@/components/form/LoginForm";
 
 export const LoginPage = ({ onSwitch }: { onSwitch: () => void }) => {
     const { authLogin } = useAuthStore()
@@ -22,7 +22,7 @@ export const LoginPage = ({ onSwitch }: { onSwitch: () => void }) => {
                 message: 'Sesión iniciada correctamente',
                 duration: 3500
             })
-            navigate("/")
+            navigate("/home")
         } catch (error) {
             setError("Error al iniciar sesión")
             toast({

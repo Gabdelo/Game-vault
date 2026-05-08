@@ -19,7 +19,7 @@ export const navbarStyles = `
                 .nav-logo-img {
                     border: 1px solid rgba(255, 252, 0, 0.8);
                     box-shadow: 0 0 5px rgba(255, 252, 0, 0.8), 0 0 5px ;
-                    border-radius: 6px !important;
+                    border-radius: 100% !important;
                     transition: box-shadow 0.3s;
                 }
                 .nav-logo-img:hover {

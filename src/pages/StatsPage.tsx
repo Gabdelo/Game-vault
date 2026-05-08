@@ -5,26 +5,39 @@ import { StatsCard } from "@/components/stats/StatsCard"
 import { FavoriteGenresChart } from "@/components/stats/FavoriteGenresChart"
 import { StatusBreakdown } from "@/components/stats/StatusBreakdown"
 import { RecentGamesAdded } from "@/components/stats/RecentGamesAdded"
+import { TopRatedGames } from "@/components/stats/TopRatedGames"
 import { Glitch } from "@/components/ui/Glitch"
+import { usePageTitle } from '@/hooks/usePageTitle'
+import { getTopRatedGames } from "@/services/calcStats"
+import { useEffect } from "react"
 
 export const StatsPage = () => {
     const user = useAuthStore(state => state.user)
     const id = user?.id || ""
     const { games, loading } = useLibrary(id)
-    const { 
-        favoriteGenres, 
-        statusBreakdown, 
-        recentGames, 
-        totalGames, 
+    usePageTitle("Analíticas")
+      useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
+    const {
+        favoriteGenres,
+        statusBreakdown,
+        recentGames,
+        totalGames,
         totalGenres
     } = useStats(games)
 
     return (
-        <div className="pt-20 sm:pt-28 md:pt-36 px-2 sm:px-4 md:px-8 min-h-screen w-full bg-black/80 overflow-x-hidden">
+        <div className="w-full relative pb-16 bg-black/10">
+            {/* Background fijo oscuro */}
+           
+
+            {/* Contenido relativo */}
+            <div className="relative z-10 pt-8 sm:pt-16 md:pt-12 px-2 sm:px-4 md:px-8 min-h-screen w-full overflow-x-hidden">
             {/* Header */}
-            <div className="mb-8 sm:mb-12">
+            <div className="mb-8 sm:mb-12 flex items-center justify-center gap-4">
                 <Glitch trigger="loop" options={{ frames: 6, speed: 10, intensity: 10 }}>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide text-white uppercase">
+                <h2 className="text-2xl sm:text-3xl md:text-6xl font-bold tracking-wide text-white uppercase">
                      ANALÍTICAS
                 </h2>
                 </Glitch>
@@ -51,7 +64,7 @@ export const StatsPage = () => {
             {!loading && totalGames > 0 && (
                 <div className="space-y-8">
                     {/* Métrica Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                         <StatsCard
                             icon=""
                             label="Total de Juegos"
@@ -73,10 +86,16 @@ export const StatsPage = () => {
                         <StatusBreakdown data={statusBreakdown} />
                     </div>
 
-                    {/* Últimos juegos */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Últimos juegos */}
                     <RecentGamesAdded games={recentGames} />
+
+                    {/* Top Rated Games */}
+                    <TopRatedGames games={getTopRatedGames(games, 5)} />
+                    </div>
                 </div>
             )}
+            </div>
         </div>
     )
 }

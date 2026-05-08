@@ -1,8 +1,9 @@
 import { create } from 'zustand'
 import directus from '../api/directus'
-import { readMe, refresh } from '@directus/sdk'
+import { readMe, refresh, createItem } from '@directus/sdk'
 import {login} from '../services/authService'
 import {register} from '../services/authService'
+import { useLibraryStore } from './libraryStore'
 
 type User = {
   id: string
@@ -23,6 +24,7 @@ type AuthStore = {
 }
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
+  
 
   user: null,
   loading: true,
@@ -95,13 +97,34 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
   authLogin: async (email, password) => {
     await login(email, password)
+    const me = await directus.request(readMe())
+    await useLibraryStore.getState().fetchLibrary(me.id)
     // Después de iniciar sesión, actualizamos los datos del usuario pero claro generara otro rederizado, lo que no es ideal, pero es la forma más sencilla de mantener el estado sincronizado con Directus
     await get().refreshUser()
   },
 
   authRegister: async (username, email, password) => {
-    await register(username, email, password)
-    await get().authLogin(email, password)
+    console.log('🔐 Iniciando registro:', { username, email })
+    try {
+      await register(username, email, password)
+      console.log('✅ Registro exitoso')
+      
+      await get().authLogin(email, password)
+      console.log('✅ Login automático exitoso')
+      
+      const me = await directus.request(readMe())
+      console.log('✅ User data recuperado:', me)
+      
+      await directus.request(createItem("user_profiles", {
+            user_id: me.id,
+            username: me.first_name,
+            is_public: true
+        }))
+      console.log('✅ user_profiles creado')
+    } catch (error) {
+      console.error('❌ Error en registro:', error)
+      throw error
+    }
   },
 
   logout: async () => {

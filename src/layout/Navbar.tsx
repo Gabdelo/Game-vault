@@ -1,14 +1,13 @@
 import {Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useSearch } from "../hooks/useSearch";
-import { GameSearch } from "@/components/Search";
-import { FiBook, FiUser, FiLogOut, FiMenu, FiX } from "react-icons/fi";
-import { navbarStyles } from "@/styles/navbarStyle";
+import { GameSearch } from "@/components/ui/Search";
+import { FiUser, FiMenu, FiX, FiDatabase, FiLogIn, FiPlus, FiHexagon } from "react-icons/fi";
 import { useToast } from "@/components/ui/CyberToast";
-import '../styles/styles.css'
-import { CyberpunkButton } from "@/components/ui/Button";
-import CyberButton from "@/components/ui/CyberButton";
+import { motion, AnimatePresence } from "framer-motion";
+import { getUserProfile } from "@/services/profileService";
+
 
 interface NavbarProps {
     onSetQuery?: (query: string) => void
@@ -25,8 +24,11 @@ export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
     const [submitted, setSubmitted] = useState(false)
     const [showProfileMenu, setShowProfileMenu] = useState(false)
     const profileMenuRef = useRef<HTMLDivElement>(null)
-    const { games, loading } = useSearch(query)
+    const { games } = useSearch(query)
     const [showMobileMenu, setShowMobileMenu] = useState(false)
+
+    const [profile, setProfile] = useState<any>(null)
+    const hasInitializedRef = useRef(false)
     
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -37,6 +39,30 @@ export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
         document.addEventListener("mousedown", handleClickOutside)
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
+
+    useEffect(() => {
+        if (hasInitializedRef.current) return
+        if (!user?.id) return
+        
+        hasInitializedRef.current = true
+        
+        const fetchProfile = async () => {
+            try {
+                const data = await getUserProfile(user.id)
+                setProfile(data)
+            } catch (error) {
+                console.error("Error fetching profile:", error)
+            }
+        }
+        
+        fetchProfile()
+    }, [user?.id])
+    
+    const avatarUrl = useMemo(() => {
+        if (!profile?.avatar) return null
+        const DIRECTUS_URL = import.meta.env.VITE_RAWG_DIRECTUS_URL || "https://directus-latest-i2px.onrender.com"
+        return `${DIRECTUS_URL}/assets/${profile.avatar}`
+    }, [profile?.avatar])
     
     const handleLogout = () => {
         logout()
@@ -50,15 +76,12 @@ export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
         navigate("/")
     }
 
-    const handleLogoClick = () => {
-        window.location.href = "/"
-    }
     
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && query.trim()) {
             setSubmitted(true)
             onSetSubmitted?.(true)
-            navigate("/search", { state: { query, submitted: true } })
+            navigate(`/explore?q=${encodeURIComponent(query)}`)
         }
     }
     
@@ -70,158 +93,233 @@ export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
     }
 
     return (
-        <>
-            <style>{navbarStyles}</style>
-          
-        
-            <nav className="nav-cyber text-white p-3 sm:p-4 relative z-10 rounded-br-[1rem] rounded-bl-[1rem] px-5 sm:px-8 md:px-12">
-                <div className="flex justify-between items-center gap-2 sm:gap-4 px-2 sm:px-0" style={{ position: 'relative', zIndex: 1 }}>
+  <div className="w-full z-50 bg-black/10 backdrop-blur-xl py-3 border-b-[1px] border-cy">
+    <nav className="max-w-full mx-auto px-4 md:px-6 py-3 flex items-center justify-between md:justify-center gap-3 md:gap-8 lg:gap-32">
+      
+      {/* LEFT — LOGO */}
+      <Link to="/home" className="flex hover:opacity-80 transition-all flex-shrink-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mr-0 ">
+          <div><img src="/logotrue.png" alt="TheZone" className="h-8 w-auto " style={{scale: 1.5}} /></div>
+          <div className="hidden md:block"><img src="/letra.png" alt="TheZone" className="h-8 w-auto " style={{scale: 2}} /></div>
+        </div>
+      </Link>
 
-                    {/* Logo */}
-                    <button onClick={handleLogoClick} className="flex-shrink-0 bg-none border-none cursor-pointer p-0">
-                        <img
-                            src="/logo4.webp"
-                            alt="GameVault"
-                            className="h-8 sm:h-10 w-auto nav-logo-img"
-                        />
-                    </button>
+      {/* CENTER — SEARCH (PROTAGONISTA) */}
+      <div className="relative z-50 w-48 md:w-96">
+        <GameSearch
+          value={query}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          resultCount={query && !submitted ? games.length : undefined}
+        />
+      </div>
 
-                    {/* Buscador - escondido en móviles */}
-                    <div className="hidden md:flex flex-1 max-w-md nav-search-wrapper">
-                        <GameSearch
-                            value={query}
-                            onChange={handleInputChange}
-                            onKeyDown={handleKeyDown}
-                            resultCount={query && !submitted ? games.length : undefined}
-                        />
+      {/* RIGHT */}
+      <div className="hidden md:flex items-center gap-6 ">
+        <Link
+          to="/explore"
+          className="flex flex-col items-center hover:text-cyan-400 transition-all text-cy"
+        >
+          <FiHexagon size={18} />
+          <span className="text-[10px] uppercase">Explora</span>
+        </Link>
 
-                        {/* Modal Popup */}
-                        {query && !submitted && (
-                            <div className="nav-results-dropdown absolute top-full left-[30%] right-0 mt-1 w-[25%] z-50 max-h-80 overflow-y-auto">
-                                {loading && (
-                                    <div className="p-4 nav-empty-text">Cargando...</div>
-                                )}
-                                {!loading && games.length === 0 && (
-                                    <div className="p-4 nav-empty-text">Sin resultados</div>
-                                )}
-                                {!loading && games.length > 0 && (
-                                    <ul className="divide-y divide-gray-900">
-                                        {games.map(game => (
-                                            <Link key={game.id} to={`/game/${game.id}`} state={{ game }}>
-                                                <li className="nav-results-item p-3 cursor-pointer transition-colors">
-                                                    <div className="flex items-center gap-3">
-                                                        {game.background_image && (
-                                                            <img
-                                                                src={game.background_image}
-                                                                alt={game.name}
-                                                                className="w-10 h-10 object-cover"
-                                                                style={{ borderRadius: '3px', border: '1px solid rgba(168,50,255,0.2)' }}
-                                                            />
-                                                        )}
-                                                        <div className="flex-1">
-                                                            <p className="font-semibold text-sm">{game.name}</p>
-                                                            <p className="text-xs">{game.released}</p>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </Link>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-                        )}
-                    </div>
+        {!isAuthenticated ? (
+          <>
+            <Link
+              to="/welcome"
+              state={{ isInLogin: true }}
+              className="flex flex-col items-center hover:text-cyan-400 transition-all text-cy"
+            >
+              <FiLogIn size={18} />
+              <span className="text-[10px] uppercase">Login</span>
+            </Link>
 
-                    {/* Auth Section - Desktop */}
-                    <div className="hidden md:flex items-center gap-2 sm:gap-4">
-                        {!isAuthenticated && (
-                            <>
-                                <Link to="/welcome" state={{ isInLogin: true }} className="nav-auth-link">
-                                    Iniciar Sesión
-                                </Link>
-                                <div className="nav-sep" />
-                                <Link to="/welcome" state={{ isInLogin: false }} className="nav-auth-link">
-                                    Registrarse
-                                </Link>
-                            </>
-                        )}
-                        {isAuthenticated && (
-                            <>
-                                {/* Biblioteca */}
-                                <CyberButton variant="secondary" accentColor="#FBFF00" className="px-3 py-1 rounded-md">
-                                <Link to="/library" className=" flex items-center gap-2 transition-colors">
-                                    <FiBook size={16} />
-                                    <span>Biblioteca</span>
-                                </Link>
-                                </CyberButton>
+            <Link
+              to="/welcome"
+              state={{ isInLogin: false }}
+              className="flex flex-col items-center hover:text-cyan-400 transition-all text-cy"
+            >
+              <FiPlus size={18} />
+              <span className="text-[10px] uppercase">Register</span>
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link
+              to="/library"
+              className="flex flex-col items-center hover:text-cyan-400 transition-all text-cy"
+            >
+              <FiDatabase size={18} />
+              <span className="text-[10px] uppercase">Library</span>
+            </Link>
 
-                                <div className="nav-sep" />
-
-                                {/* Profile Dropdown */}
-                                <div className="relative" ref={profileMenuRef}>
-                                    <CyberButton onClick={() => setShowProfileMenu(!showProfileMenu)} variant="secondary" accentColor="#00FFFF">
-                                  
-                                        <FiUser size={16} />
-                                        <span>{user?.first_name}</span>
-                                        <span style={{ opacity: 0.4, fontSize: '8px' }}>▼</span>
-                                    
-                                    </CyberButton>
-                                    {/* Dropdown Menu */}
-                                    {showProfileMenu && (
-                                        <div className="nav-profile-dropdown absolute right-0 mt-2 w-48 z-50 py-1">
-                                            <CyberpunkButton variant="danger" onClick={handleLogout} >
-                                                <FiLogOut size={14} />
-                                                Cerrar Sesión
-                                            </CyberpunkButton>
-                                            
-                                        </div>
-                                    )}
-                                </div>
-                            </>
-                        )}
-                    </div>
-
-                    {/* Spacer - pushes mobile menu to the right */}
-                    <div className="flex-1 md:hidden" />
-
-                    {/* Mobile Menu Button */}
-                    <button 
-                        onClick={() => setShowMobileMenu(!showMobileMenu)}
-                        className="md:hidden flex-shrink-0 text-white p-2 hover:text-yellow-400 transition-colors"
-                    >
-                        {showMobileMenu ? <FiX size={24} /> : <FiMenu size={24} />}
-                    </button>
-                </div>
-
-                {/* Mobile Menu */}
-                {showMobileMenu && (
-                    <div className="md:hidden mt-4 pb-4 border-t border-white/10">
-                        {!isAuthenticated && (
-                            <>
-                                <Link to="/welcome" state={{ isInLogin: true }} className="block py-2 px-4 hover:bg-white/10 transition-colors">
-                                    Iniciar Sesión
-                                </Link>
-                                <Link to="/welcome" state={{ isInLogin: false }} className="block py-2 px-4 hover:bg-white/10 transition-colors">
-                                    Registrarse
-                                </Link>
-                            </>
-                        )}
-                        {isAuthenticated && (
-                            <>
-                                <Link to="/library" className="flex items-center gap-2 py-2 px-4 hover:bg-white/10 transition-colors">
-                                    <FiBook size={16} />
-                                    Biblioteca
-                                </Link>
-                                <button onClick={handleLogout} className="flex items-center gap-2 w-full py-2 px-4 hover:bg-red-500/20 transition-colors text-left">
-                                    <FiLogOut size={16} />
-                                    Cerrar Sesión
-                                </button>
-                            </>
-                        )}
-                    </div>
+            {/* PROFILE */}
+            <div className="relative" ref={profileMenuRef}>
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex flex-col items-center hover:opacity-80 transition-all"
+              >
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt="profile"
+                    className="w-8 h-8 rounded-full object-cover border-2 border-cy hover:border-cyan-400"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gray-700 border-2 border-cy flex items-center justify-center">
+                    <FiUser size={14} className="text-cy" />
+                  </div>
                 )}
-            </nav>
+              </button>
+
+              <AnimatePresence>
+                {showProfileMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute right-0 mt-2 w-52 rounded-xl bg-black/95 border border-yellow-400/20 shadow-xl overflow-hidden"
+                  >
+                    <Link
+                      to="/friends"
+                      className="block px-4 py-3 text-sm text-white hover:bg-cyan-500/10"
+                    >
+                      Amigos
+                    </Link>
+
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-3 text-sm text-white hover:bg-cyan-500/10"
+                    >
+                      Perfil
+                    </Link>
+
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 border-t border-red-400/20"
+                    >
+                      Cerrar sesión
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* MOBILE */}
+      <button
+        onClick={() => setShowMobileMenu(!showMobileMenu)}
+        className="md:hidden text-cy"
+      >
+        {showMobileMenu ? <FiX size={26} /> : <FiMenu size={26} />}
+      </button>
+    </nav>
+
+    {/* MOBILE MENU */}
+    <AnimatePresence>
+      {showMobileMenu && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="md:hidden border-t border-yellow-400/20 bg-black/80 backdrop-blur-md"
+        >
+          <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-4">
+            {/* Buscador en móvil */}
            
-        </>
-    )
+
+            {/* Explora */}
+            <Link
+              to="/explore"
+              className="px-4 py-2.5 text-white hover:bg-yellow-400/10 rounded transition-colors flex items-center gap-2"
+              onClick={() => setShowMobileMenu(false)}
+            >
+              <FiHexagon size={18} />
+              <span>Explora</span>
+            </Link>
+
+            {!isAuthenticated ? (
+              <>
+                <Link
+                  to="/welcome"
+                  state={{ isInLogin: true }}
+                  className="px-4 py-2.5 text-cy hover:bg-yellow-400/10 rounded transition-colors flex items-center gap-2"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  <FiLogIn size={18} />
+                  <span>Iniciar Sesión</span>
+                </Link>
+                <Link
+                  to="/welcome"
+                  state={{ isInLogin: false }}
+                  className="px-4 py-2.5 text-cy hover:bg-yellow-400/10 rounded transition-colors flex items-center gap-2"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  <FiPlus size={18} />
+                  <span>Registrarse</span>
+                </Link>
+              </>
+            ) : (
+              <>
+                {/* Biblioteca */}
+                <Link
+                  to="/library"
+                  className="px-4 py-2.5 text-white hover:bg-cy/10 rounded transition-colors flex items-center gap-2"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  <FiDatabase size={18} />
+                  <span>Biblioteca</span>
+                </Link>
+
+                {/* Amigos */}
+                <Link
+                  to="/friends"
+                  className="px-4 py-2.5 text-white hover:bg-cyan-500/10 rounded transition-colors flex items-center gap-2"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  <FiUser size={18} />
+                  <span>Amigos</span>
+                </Link>
+
+                {/* Perfil con Avatar */}
+                <Link
+                  to="/profile"
+                  className="px-4 py-2.5 text-white hover:bg-blue-500/10 rounded transition-colors flex items-center gap-3"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt="profile"
+                      className="w-7 h-7 rounded-full object-cover border-2 border-cy hover:border-cyan-400"
+                    />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full border-2 border-cy flex items-center justify-center">
+                      <FiUser size={12} className="text-cy" />
+                    </div>
+                  )}
+                  <span>Mi Perfil</span>
+                </Link>
+
+                {/* Cerrar sesión */}
+                <button
+                  onClick={() => {
+                    handleLogout()
+                    setShowMobileMenu(false)
+                  }}
+                  className="px-4 py-2.5 text-red-400 hover:bg-red-500/10 rounded transition-colors text-left border-t border-red-400/20 mt-2"
+                >
+                  Cerrar sesión
+                </button>
+              </>
+            )}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+)
 }

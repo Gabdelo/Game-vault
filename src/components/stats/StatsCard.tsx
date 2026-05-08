@@ -8,10 +8,11 @@ interface Props {
 }
 
 const colorClasses: Record<string, string> = {
-    cyan: "text-cyan-400",
-    yellow: "text-yellow-400",
+    cyan: "text-cy",
+    yellow: "text-cy",
     purple: "text-purple-400",
     green: "text-green-400"
+    
 }
 
 export const StatsCard = ({ icon, label, value, color = "cyan" }: Props) => {
@@ -20,7 +21,7 @@ export const StatsCard = ({ icon, label, value, color = "cyan" }: Props) => {
                 cornerLines
                 glow
                 accentColor="#F2FF00"
-                bgColor="#0a160f"
+                bgColor="#000000"
                 padding="24px">
        
             <div className="flex items-center justify-between">

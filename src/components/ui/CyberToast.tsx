@@ -53,9 +53,9 @@ const TOAST_CSS = `
 
 .ct-portal {
   position: fixed;
-  top: 20px; right: 20px;
+  bottom: 20px; right: 20px;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   gap: 8px;
   z-index: 9999;
   width: 320px;

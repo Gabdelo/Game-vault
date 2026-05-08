@@ -22,7 +22,10 @@ export const useSearch = (GameName:string) => {
                 const data = await searchGames(GameName, 1, controller.signal) //pasamos la señal de abort a la funcion de busqueda
                 setGames(data.results)
             } catch (error) {
-                console.error("Error fetching games:", error)
+                //ignore abort errors - they are expected when requests are cancelled
+                if (error instanceof Error && error.name !== 'AbortError') {
+                    console.error("Error fetching games:", error)
+                }
             } finally {
                 setLoading(false)
             }

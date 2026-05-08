@@ -21,14 +21,14 @@ const COLORS = [
 
 export const FavoriteGenresChart = ({ data }: Props) => {
     return (
-        <CyberBox padding="10px" label="GENRES" cornerLines glow accentColor="#F2FF00" bgColor="#0a160f">
+        <CyberBox padding="10px" label="GENRES" cornerLines glow accentColor="#F2FF00" bgColor="#000000">
         <div className="w-full h-full rounded-lg backdrop-blur-sm justify-center items-center flex flex-col p-6">
-            <h3 className="text-xl font-bold text-yellow-400 mb-4 uppercase tracking-wider">
+            <h3 className="text-xl font-bold text-cy mb-4 uppercase tracking-wider">
                 ◆ GÉNEROS FAVORITOS
             </h3>
-            
+
             <div className="w-full h-80">
-                
+
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie

@@ -9,6 +9,11 @@ export default {
       orbitron: ["Orbitron", "sans-serif"],
       rajdhani: ["Rajdhani", "sans-serif"],
       sans: ['"Geist Variable"', "sans-serif"],
+      screens: {
+      md: "768px",
+      mdl: "900px", 
+      lg: "1024px",
+    },
     },
     extend: {
       colors: {
@@ -46,6 +51,7 @@ export default {
         "sidebar-accent-foreground": "var(--sidebar-accent-foreground)",
         "sidebar-border": "var(--sidebar-border)",
         "sidebar-ring": "var(--sidebar-ring)",
+        cy: "var(--cy)",
       },
       boxShadow: {
         custom:

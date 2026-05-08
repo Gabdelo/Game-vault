@@ -65,8 +65,8 @@ export const useStats = (games: Game[]) => {
     const recentGames = useMemo(() => {
         return [...games]
             .sort((a, b) => {
-                const dateA = new Date(a.date_created || 0).getTime()
-                const dateB = new Date(b.date_created || 0).getTime()
+                const dateA = new Date(a.added_at || 0).getTime()
+                const dateB = new Date(b.added_at || 0).getTime()
                 return dateB - dateA
             })
             .slice(0, 6)

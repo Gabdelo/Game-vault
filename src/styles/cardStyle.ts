@@ -9,7 +9,7 @@ export const cardStyles = `
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    border-radius: 10px;
+
     width: 19rem;
     min-width: 10rem;
     max-width: 20rem;
@@ -17,7 +17,6 @@ export const cardStyles = `
     margin: 0.5rem;
     
   }
-
   /* Línea de acento superior */
   .cp-card::before {
     content: '';
@@ -40,7 +39,7 @@ export const cardStyles = `
     right: -40px;
     width: 120px;
     height: 120px;
-    background: radial-gradient(circle, rgba(0, 252, 255, 0.12) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 252, 255, 0.12) 0%, transparent 50%);
     transition: opacity 0.35s;
     pointer-events: none;
   }
@@ -330,7 +329,7 @@ export const cardStyles = `
     .cp-card {
       width: 14rem;
       max-width: 18rem;
-      height: 420px;
+      height: 380px;
     }
 
     .cp-card__title {

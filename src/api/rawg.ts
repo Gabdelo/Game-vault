@@ -12,8 +12,13 @@ export const apiFetch = async (endpoint: string, signal?: AbortSignal) => {
         //se devuelve la respuesta en formato json
         return await response.json()
     }catch (error) {
+        //ignore abort errors - they are expected when requests are cancelled
+        if (error instanceof Error && error.name === 'AbortError') {
+            throw error
+        }
         //si hay un error se muestra en consola y se lanza el error para que pueda ser manejado por quien llame a esta función
         console.error('Error fetching data:', error)
         throw error
     }
 }
+

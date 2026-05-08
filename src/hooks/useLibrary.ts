@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Game } from "../types/game";
-import { getFullLibraryGames } from "../services/gamesService";
+import { getUserLibrary } from "../services/gamesService";
 
 export const useLibrary = (userId: string) => {
 
@@ -15,8 +15,8 @@ export const useLibrary = (userId: string) => {
             return
         }
         const fetchGames = async () => {
-            const data = await getFullLibraryGames(userId)
-            setGames(data.results)
+            const data = await getUserLibrary(userId)
+            setGames(data)
             setLoading(false)
         }
         fetchGames()

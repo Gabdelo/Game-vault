@@ -1,20 +1,25 @@
 import { useState, useEffect } from "react"
 import type { Game } from "../types/game"
-import { getGamesByFilter } from "../services/gamesService"
+import { getGamesByFilters, type GameFilters } from "../services/gamesService"
 
-export const useGames = (filter: string) => {
+export const useGames = (filters: GameFilters) => {
     const [games, setGames] = useState<Game[]>([])
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         setLoading(true)
         const fetchGames = async () => {
-            const data = await getGamesByFilter(filter)
-            setGames(data.results)
-            setLoading(false)
+            try {
+                const data = await getGamesByFilters(filters)
+                setGames(data.results)
+            } catch (error) {
+                console.error("Error fetching games:", error)
+            } finally {
+                setLoading(false)
+            }
         }
         fetchGames()
-    }, [filter])
+    }, [JSON.stringify(filters)])
 
     return { games, loading }
 }

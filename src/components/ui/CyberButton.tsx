@@ -59,8 +59,8 @@ const CYBER_BTN_CSS = `
 
 /* ── Primary ── */
 .cb-primary {
-  color: #080c14;
-  background: var(--cb-accent, #00f5ff);
+  color: black;
+  background: var(--cb-accent, #FBFF00);
   box-shadow: 0 0 12px color-mix(in srgb, var(--cb-accent, #00f5ff) 50%, transparent);
   font-weight: 900;
 }
@@ -73,32 +73,28 @@ const CYBER_BTN_CSS = `
 
 /* ── Secondary ── */
 .cb-secondary {
-  color: var(--cb-accent, #ff00aa);
-  border: 1px solid var(--cb-accent, #ff00aa);
-  box-shadow: inset 0 0 8px color-mix(in srgb, var(--cb-accent, #ff00aa) 15%, transparent);
+  color: black;
+  background: #00ECFF;
+  box-shadow: 0 0 12px color-mix(in srgb, #00ECFF 50%, transparent);
+  font-weight: 900;
 }
-.cb-secondary .cb-fill {
-  position: absolute;
-  inset: 0;
-  background: var(--cb-accent, #ff00aa);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.25s ease;
-  z-index: 0;
+.cb-secondary:hover {
+  filter: brightness(1.2);
+  box-shadow: 0 0 22px color-mix(in srgb, #00ECFF 70%, transparent);
+  transform: translateY(-1px);
 }
-.cb-secondary:hover .cb-fill { transform: scaleX(1); }
-.cb-secondary:hover { color: #080c14; box-shadow: 0 0 16px color-mix(in srgb, var(--cb-accent, #ff00aa) 55%, transparent); }
-.cb-secondary .cb-content { position: relative; z-index: 1; display: flex; align-items: center; gap: 7px; }
+.cb-secondary:active { transform: scale(0.97); }
+
 
 /* ── Ghost ── */
 .cb-ghost {
-  color: #6a90b0;
+  color: black;
   border: 1px solid #1a2540;
-  background: #0d1420;
+  background: #00FFF7;
   clip-path: polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
   font-size: 11px; padding: 8px 18px;
 }
-.cb-ghost:hover { border-color: #4a6080; color: #c8d8f0; background: #1a2540; }
+.cb-ghost:hover { scale: 1.05; }
 
 /* ── Icon-only ── */
 .cb-icon {
@@ -107,7 +103,7 @@ const CYBER_BTN_CSS = `
   clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
   font-size: 16px;
 }
-.cb-icon:hover { background: rgba(255,255,255,.07); }
+
 .cb-icon-cyan     { border-color: #00f5ff; color: #00f5ff; }
 .cb-icon-magenta  { border-color: #ff00aa; color: #ff00aa; }
 .cb-icon-green    { border-color: #00ff88; color: #00ff88; }
@@ -165,8 +161,7 @@ export function CyberButton({
         className={`cb-root cb-secondary cb-${size} ${className}`}
         style={{ ...cssVars, ...style }}
       >
-        <span className="cb-fill" aria-hidden="true" />
-        <span className="cb-content">{children}</span>
+        {children}
       </button>
     );
   }

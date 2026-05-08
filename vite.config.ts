@@ -17,7 +17,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://directus-latest-i2px.onrender.com",
+        target: "http://localhost:8055",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

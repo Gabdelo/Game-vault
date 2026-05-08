@@ -1,22 +1,28 @@
 import { Outlet } from "react-router-dom"
 import { Navbar } from "./Navbar"
+import { Footer } from "./Footer"
+import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton"
 
 export const Layout = () => {
     return (
-        <div className="flex h-screen overflow-x-hidden">
-            {/* Sidebar */}
+        <div className="flex flex-col min-h-screen">
+            {/* Navbar */}
+            <div className="w-full z-50 fixed" >
+                <Navbar />
+            </div>
             
-            
-            <div className="flex-1 flex flex-col relative overflow-x-hidden">
-                {/* Fixed Navbar */}
-                <div className="fixed top-0 right-0 left-0 z-40">
-                    <Navbar />
-                </div>
+            {/* Content area */}
+            <div className="flex-1 overflow-x-hidden flex flex-col bg-black/90 pt-20">
+                <Outlet />
+                {/* Footer al final del contenido */}
                 
-                {/* Content with top padding for navbar */}
-                <div className="flex-1 overflow-auto overflow-x-hidden">
-                    <Outlet />
-                </div>
+            </div>
+            <div className=" z-20">
+                <Footer />
+            </div>
+            {/* Scroll to top button */}
+            <div>
+                <ScrollToTopButton />
             </div>
         </div>
     )

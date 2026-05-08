@@ -2,7 +2,7 @@ import {useNavigate} from "react-router-dom";
 import { useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import { useToast } from "../components/ui/CyberToast";
-import RegisterForm from "@/components/RegisterForm";
+import RegisterForm from "@/components/form/RegisterForm";
 
 export const RegisterPage = ({onSwitch}: {onSwitch: () => void}) => {
 

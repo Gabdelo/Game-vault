@@ -4,36 +4,26 @@ import { useState } from 'react'
 import { LoginPage } from './LoginPage'
 import { RegisterPage } from './RegisterPage'
 import { motion, AnimatePresence } from 'framer-motion'
-import ThreeScene from '../components/Head3D'
-import { CyberBox } from '@/components/ui/CyberBox'
+import ThreeScene from '../components/form/Head3D'
+import { usePageTitle } from '@/hooks/usePageTitle'
+
 
 
 export const FormPage = ({isInLoginn}: {isInLoginn: boolean}) => {
     const location = useLocation()
+    
     const initialState = location.state?.isInLogin ?? isInLoginn ?? true
     const [isInLogin, setInIsLogin] = useState(initialState)
+    usePageTitle(isInLogin ? "Incio de Sesión" : "Registro")
 
     return (
-        <CyberBox 
-          className="w-full h-screen"
-          cornerLines
-          glow
-          accentColor="#000000"
-          bgColor="#000000"
-          padding="0"
-        >
+       
         <div 
-          className="relative flex flex-col md:flex-row items-center justify-center w-full h-full bg-no-repeat bg-cover bg-center"
+          className="relative flex flex-col md:flex-row items-center justify-center w-full h-screen bg-no-repeat bg-cover "
           style={{ backgroundImage: "url('/cyberpunk_original.png')" }}
         >
-            <video
-                className="absolute top-0 left-0 w-full h-full object-cover z-0"
-                src="/"
-                autoPlay
-                loop
-                muted
-                playsInline
-            />
+            
+            
             {/* ThreeScene - hidden en móviles */}
             <motion.div
                 className='hidden md:flex w-full md:w-1/2 h-full items-center justify-center relative z-10'
@@ -46,7 +36,7 @@ export const FormPage = ({isInLoginn}: {isInLoginn: boolean}) => {
             
             {/* Formulario Mobile - sin animación horizontal */}
             <div
-                className='md:hidden w-full h-full flex items-center justify-center relative z-10'
+                className='md:hidden w-full h-full flex items-center justify-center relative z-10 px-4'
             >
                 <AnimatePresence mode="wait">
                     {isInLogin ? (
@@ -105,7 +95,7 @@ export const FormPage = ({isInLoginn}: {isInLoginn: boolean}) => {
                 </AnimatePresence>
             </motion.div>
         </div>
-        </CyberBox>
+       
     )
 
 }

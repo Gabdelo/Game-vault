@@ -1,6 +1,7 @@
 import { Terminal, Zap, Shield, Activity, Database, Cpu } from "lucide-react"
 import { CyberpunkCard } from "../ui/cyberpunk-card"
 
+
 export function CyberpunkCardDemo1() {
   return (
     <CyberpunkCard
@@ -48,6 +49,7 @@ export function CyberpunkCardDemo1() {
             </div>
           </div>
         </div>
+        
         <div className="space-y-3">
           <div className="relative">
             <div className="flex justify-between items-center mb-2">

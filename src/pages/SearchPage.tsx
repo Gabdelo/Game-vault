@@ -1,375 +1,391 @@
-import { useState, useEffect } from "react";
-import { searchGames, getGamesByGenre, getGamesByFilter } from "../services/gamesService";
-import type { Game } from "../types/game";
-
-import GameCard from "../components/ui/GameCard";
-import GameCardSkeleton from "../components/ui/GameCardSkeleton";
-import { useAuthStore } from "../store/authStore";
-import { useLocation, Link } from "react-router-dom";
-import { getGamesInLibrary } from "../services/gamesService";
-import { MainPage } from "./MainPage";
-import { FilterSidebar } from "../components/FilterSidebar";
-import { Pagination } from "@/components/Pagination";
-import { useSearch } from "@/hooks/useSearch";
-
-
-
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/authStore";
+import GameCard from "@/components/ui/GameCard";
+import GameCardSkeleton from "@/components/ui/GameCardSkeleton";
+import { Pagination } from "@/components/ui/Pagination";
+import { GenresSidebarFilter } from "@/components/GenresSidebarFilter";
+import { HeroCarousel } from "@/components/main/HeroCarousel";
+import { SearchPageFiltersLoadingSkeleton } from "@/components/main/SearchPageSkeleton";
+import { useGameSearch } from "@/hooks/useGameSearch";
+import { useLibraryStore } from "@/store/libraryStore";
+import { GENRES } from "@/services/genresMap";
+import type { Game } from "@/types/game";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiFilter, FiX } from "react-icons/fi";
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 export const SearchPage = () => {
-    const location = useLocation()
-    
-    const user = useAuthStore(state => state.user)
-    const [query, setQuery] = useState("")
-    const [submitted, setSubmitted] = useState(false)
+  const { library } = useLibraryStore();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const user = useAuthStore(state => state.user);
+  const [libraryGameIds, setLibraryGameIds] = useState<Set<number>>(new Set());
+  const [selectedGenreIds, setSelectedGenreIds] = useState<number[]>([]);
+  const [selectedGenreNames, setSelectedGenreNames] = useState<string[]>([]);
+  const [selectedTagNames, setSelectedTagNames] = useState<string[]>([]);
+  const [activeOrdering, setActiveOrdering] = useState("");
+  const [heroGames, setHeroGames] = useState<Game[]>([]);
+  const [heroTitle, setHeroTitle] = useState<string>("");
+  const [heroLoading] = useState(false);
+  const [heroInitializedRef, setHeroInitialized] = useState(false);
+  const [initialFilterRef, setInitialFilter] = useState(false); // Rastrear si vino de URL con filtros
+  const [heroDisabledManually, setHeroDisabledManually] = useState(false); // Rastrear si fue limpiado manualmente
+  const [defaultOrderingApplied, setDefaultOrderingApplied] = useState(false); // Rastrear si se aplicó el ordenamiento por defecto
+  const [loadingAll, setLoadingAll] = useState(false); // true si cualquiera está cargando
+  const [showMobileFilters, setShowMobileFilters] = useState(false) // Modal de filtros en mobile
+  const searchTerm = searchParams.get("q") || "";
+  const tagsParam = searchParams.get("tags") || "";
+  const genresParamInitial = useRef(searchParams.get("genres") || "");
+  const hasInitializedRef = useRef(false);
+  const hasInitializedTagsRef = useRef("");
+  const hasInitializedTagsCallRef = useRef(false);
+  
+  usePageTitle(searchTerm ? `Búsqueda: ${searchTerm}` : "Explorar Juegos")
 
-    const [libraryGameIds, setLibraryGameIds] = useState<Set<number>>(new Set())
-    
-    const [activeGenre, setActiveGenre] = useState<string>("")
-    const [activeFilter, setActiveFilter] = useState<string>("")
-    const [filteredGames, setFilteredGames] = useState<Game[]>([])
-    const [filterLoading, setFilterLoading] = useState(false)
-    const [showSidebarMobile, setShowSidebarMobile] = useState(false)
-    const { games: searchResults, loading: searchLoading } = useSearch(query)
-    
-    // Paginación para búsqueda
-    const [currentPage, setCurrentPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(1)
-    const [paginatedGames, setPaginatedGames] = useState<Game[]>([])
+  
 
-    // Cargar desde location.state (búsqueda)
-    useEffect(() => {
-        if (location.state?.query) {
-            setQuery(location.state.query)
-            setSubmitted(location.state.submitted || true)
-            setActiveGenre("")
-            setActiveFilter("")
-            setCurrentPage(1)
-        }
-    }, [location.state])
+  const {games,loading,totalPages,currentPage,
+    changePage,
+    setGenres,
+    setTags,
+    setOrdering,
+    searchByText,
+    clearFilters,
+  } = useGameSearch();
 
-    // Cuando navega a "/" (home), mostrar MainPage
-    useEffect(() => {
-        if (location.pathname === "/") {
-            setSubmitted(false)
-            setQuery("")
-        }
-    }, [location.pathname])
 
-    // Cargar juegos paginados cuando se busca
-    useEffect(() => {
-        if (submitted && query.trim() && !activeGenre && !activeFilter) {
-            const fetchPaginatedGames = async () => {
-                setFilterLoading(true)
-                try {
-                    const data = await searchGames(query, currentPage)
-                    setPaginatedGames(data.results)
-                    // RAWG devuelve "count" (total de resultados)
-                    const pages = Math.ceil((data.count || 0) / 20)
-                    setTotalPages(Math.max(1, pages))
-                } catch (error) {
-                    console.error("Error fetching paginated games:", error)
-                } finally {
-                    setFilterLoading(false)
-                }
-            }
-            fetchPaginatedGames()
-        }
-    }, [submitted, query, currentPage, activeGenre, activeFilter])
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-    // Cargar juegos paginados cuando hay filtros activos
-    useEffect(() => {
-        if (submitted && (activeGenre || activeFilter)) {
-            const fetchFilteredPaginatedGames = async () => {
-                setFilterLoading(true)
-                try {
-                    let data
-                    if (activeGenre) {
-                        data = await getGamesByGenre(activeGenre, currentPage)
-                    } else {
-                        data = await getGamesByFilter(activeFilter, currentPage)
-                    }
-                    setFilteredGames(data.results)
-                    const pages = Math.ceil((data.count || 0) / 20)
-                    setTotalPages(Math.max(1, pages))
-                } catch (error) {
-                    console.error("Error fetching filtered paginated games:", error)
-                } finally {
-                    setFilterLoading(false)
-                }
-            }
-            fetchFilteredPaginatedGames()
-        }
-    }, [submitted, currentPage, activeGenre, activeFilter])
+  // Actualizar loadingAll cuando loading o heroLoading cambien
+  useEffect(() => {
+    setLoadingAll(loading || heroLoading);
+  }, [loading, heroLoading]);
 
-    // Obtener juegos en la librería del usuario
-    useEffect(() => {
-        if (user?.id) {
-            const fetchLibraryGames = async () => {
-                const libraryItems = await getGamesInLibrary(user.id)
-                const ids = new Set(libraryItems.map(item => item.game_id))
-                setLibraryGameIds(ids)
-            }
-            fetchLibraryGames()
-        }
-    }, [user?.id])
-
-    // Manejar filtros de género
-    const handleGenreSelect = async (genre: string) => {
-        setActiveGenre(genre)
-        setActiveFilter("")
-        setSubmitted(true)
-        setCurrentPage(1) // Reset a página 1
-        setTotalPages(1)
-        
-        if (genre === "") {
-            setFilteredGames([])
-            return
-        }
-
-        setFilterLoading(true)
-        try {
-            const data = await getGamesByGenre(genre, 1)
-            setFilteredGames(data.results)
-            const pages = Math.ceil((data.count || 0) / 20)
-            setTotalPages(Math.max(1, pages))
-        } catch (error) {
-            console.error("Error fetching games by genre:", error)
-        } finally {
-            setFilterLoading(false)
-        }
+  // Detectar si vino con filtros en la URL al montar
+  useEffect(() => {
+    const hasInitialFilter = genresParamInitial.current || tagsParam;
+    if (hasInitialFilter) {
+      setInitialFilter(true);
     }
+  }, []);
 
-    // Manejar filtros rápidos
-    const handleFilterSelect = async (filter: string) => {
-        setActiveFilter(filter)
-        setActiveGenre("")
-        setSubmitted(true)
-        setCurrentPage(1) // Reset a página 1
-        setTotalPages(1)
-
-        if (filter === "") {
-            setFilteredGames([])
-            return
+  // Aplicar ordenamiento por defecto si no hay filtros en la URL
+  useEffect(() => {
+    if (!defaultOrderingApplied && !searchTerm && !genresParamInitial.current && !tagsParam) {
+      setOrdering("-added");
+      setActiveOrdering("added");
+      setDefaultOrderingApplied(true);
+    }
+  }, []);
+  // Obtener juegos en la librería del usuario
+  useEffect(() => {
+    if (library.length > 0) {
+      const ids = new Set(library.map((item) => item.id));
+      setLibraryGameIds(ids);
+    }
+  }, [library]);
+  // Ejecutar búsqueda cuando hay término en URL
+  useEffect(() => {
+    if (searchTerm) {
+      searchByText(searchTerm);
+    }
+  }, [searchTerm]);
+  // Leer géneros y tags de la URL UNA SOLA VEZ al montar
+  useEffect(() => {
+    // Leer géneros
+    if (!hasInitializedRef.current) {
+      const genresParam = searchParams.get("genres");
+      if (genresParam) {
+        const genreIds = genresParam.split(",").map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+        if (genreIds.length > 0) {
+          setSelectedGenreIds(genreIds);
+          setGenres(genreIds);
+          hasInitializedRef.current = true;
         }
-
-        setFilterLoading(true)
-        try {
-            const data = await getGamesByFilter(filter, 1)
-            setFilteredGames(data.results)
-            const pages = Math.ceil((data.count || 0) / 40)
-            setTotalPages(Math.max(1, pages))
-        } catch (error) {
-            console.error("Error fetching games by filter:", error)
-        } finally {
-            setFilterLoading(false)
-        }
+      }
     }
-
-    // Determinar qué juegos mostrar
-    const gamesToDisplay = activeGenre || activeFilter ? filteredGames : paginatedGames
-    const isLoading = activeGenre || activeFilter ? filterLoading : filterLoading
-    const currentTitle = activeGenre 
-        ? `Género: ${activeGenre.toUpperCase()}`
-        : activeFilter
-        ? `${activeFilter === 'rating' ? 'Más valorados' : activeFilter === 'added' ? 'Populares' : activeFilter === 'released' ? 'Más recientes' : 'Según crítica'}`
-        : `Resultados de búsqueda: ${query.toUpperCase()}`
-    
-    const handlePageChange = (newPage: number) => {
-        setCurrentPage(newPage)
-        // Scroll al top
-        document.querySelector(".flex-1.overflow-y-auto.pt-8")?.scrollTo({ top: 0, behavior: "smooth" })
+  }, []);
+  // Detectar cambios en tags - ejecutar solo cuando el parámetro tags cambie
+  useEffect(() => {
+    if (tagsParam && tagsParam !== hasInitializedTagsRef.current) {
+      const tagNames = tagsParam.split(",").map(tag => tag.trim()).filter(tag => tag.length > 0);
+      console.log("Tags desde URL:", tagNames);
+      if (tagNames.length > 0 && !hasInitializedTagsCallRef.current) {
+        setSelectedTagNames(tagNames);
+        setTags(tagNames);
+        setHeroGames([]); // Limpiar carrusel cuando cambian los tags
+        setHeroInitialized(false);
+        hasInitializedTagsCallRef.current = true;
+      }
+      hasInitializedTagsRef.current = tagsParam;
+    } else if (!tagsParam && hasInitializedTagsRef.current) {
+      // Si no hay tags en URL y había antes, limpiar
+      setSelectedTagNames([]);
+      hasInitializedTagsRef.current = "";
+      hasInitializedTagsCallRef.current = false;
     }
+  }, [tagsParam, setTags]);
+  // Actualizar nombres de géneros cuando cambian los IDs
+  useEffect(() => {
+    const names = selectedGenreIds
+      .map(id => {
+        const genre = GENRES.find(g => g.id === id);
+        return genre?.name || null;
+      })
+      .filter((name): name is string => name !== null);
+    setSelectedGenreNames(names);
+  }, [selectedGenreIds]);
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter" && query.trim()) {
-            setSubmitted(true)
-            setActiveGenre("")
-            setActiveFilter("")
-            setCurrentPage(1)
-        }
+  // Inicializar hero games solo si vino de URL con filtros
+  useEffect(() => {
+    if (initialFilterRef && !heroInitializedRef && games.length > 0 && (selectedGenreIds.length > 0 || selectedTagNames.length > 0)) {
+      setHeroGames(games.slice(0, 10));
+      const title = selectedTagNames.length > 0
+        ? selectedTagNames.join(" • ")
+        : selectedGenreNames.length > 0
+        ? selectedGenreNames.join(" • ")
+        : "Juegos destacados";
+      setHeroTitle(title);
+      setHeroInitialized(true);
     }
+  }, [games, selectedGenreIds, selectedTagNames, heroInitializedRef, selectedGenreNames, initialFilterRef]);
 
-    const handleInputChange = (value: string) => {
-        setQuery(value)
-        setSubmitted(false)
-    }
-
-    return (
-        <div className="min-h-screen flex flex-col relative">
-            {/* Background con blur */}
-            
-            <div
-                className="absolute inset-0"
-                style={{
-                    backgroundImage: "url('/blackbg.jpg')",
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundAttachment: 'fixed',
-                    filter: 'blur(8px)',
-                    transform: 'scale(1.1)',
-                    backgroundColor: 'rgba(0, 0, 0, 0.9)' // Capa oscura para mejorar contraste
-                }}
-            />
-            
-
-            {/* Overlay oscuro opcional para mejorar legibilidad */}
-            <div className="absolute inset-0 bg-black/10" />
-
-            {/* TOP SECTION: Botón de filtros + Buscador solo en mobile */}
-            <div className="relative z-20 pt-[5rem]">
-                <div className="md:hidden flex items-center gap-2 px-2 sm:px-4 py-3 border-b border-white/10">
-                    <button 
-                        onClick={() => setShowSidebarMobile(!showSidebarMobile)}
-                        className="flex items-center gap-2 px-2 sm:px-3 py-2 rounded border border-white/20 hover:border-yellow-400 text-white hover:text-yellow-400 transition-colors whitespace-nowrap text-sm"
-                        title="Filtros"
-                    >
-                        ☰ Filtros
-                    </button>
-
-                    {/* Buscador mobile */}
-                    <div className="flex-1 min-w-0 relative">
-                        <input
-                            type="text"
-                            placeholder="Buscar juego..."
-                            value={query}
-                            onChange={(e) => handleInputChange(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            className="w-full px-2 sm:px-3 py-1.5 bg-white/5 border border-white/20 rounded text-white placeholder-white/40 text-sm focus:outline-none focus:border-yellow-400"
-                        />
-
-                        {/* Dropdown de resultados */}
-                        {query && !submitted && (
-                            <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-white/20 rounded max-h-64 overflow-y-auto z-50">
-                                {searchLoading && (
-                                    <div className="p-3 text-white/50 text-sm">Cargando...</div>
-                                )}
-                                {!searchLoading && searchResults.length === 0 && (
-                                    <div className="p-3 text-white/50 text-sm">Sin resultados</div>
-                                )}
-                                {!searchLoading && searchResults.length > 0 && (
-                                    <ul className="divide-y divide-gray-900">
-                                        {searchResults.map(game => (
-                                            <Link key={game.id} to={`/game/${game.id}`} state={{ game }}>
-                                                <li className="p-2 hover:bg-white/10 cursor-pointer transition-colors">
-                                                    <div className="flex items-center gap-2">
-                                                        {game.background_image && (
-                                                            <img
-                                                                src={game.background_image}
-                                                                alt={game.name}
-                                                                className="w-8 h-8 object-cover rounded"
-                                                            />
-                                                        )}
-                                                        <div className="flex-1 min-w-0">
-                                                            <p className="font-semibold text-xs text-white truncate">{game.name}</p>
-                                                            <p className="text-xs text-white/50">{game.released}</p>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </Link>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Dropdown Filtros Mobile - bajo el botón */}
-                {showSidebarMobile && (
-                    <div className="md:hidden bg-black/90 border-b border-white/10 overflow-y-auto max-h-[50vh] z-20">
-                        <div className="p-4">
-                            <FilterSidebar
-                                onGenreSelect={(genre) => {
-                                    handleGenreSelect(genre)
-                                    setShowSidebarMobile(false)
-                                }}
-                                onFilterSelect={(filter) => {
-                                    handleFilterSelect(filter)
-                                    setShowSidebarMobile(false)
-                                }}
-                                activeGenre={activeGenre}
-                                activeFilter={activeFilter}
-                            />
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* Contenido principal */}
-            <div className="relative z-10 flex-1 flex gap-2 sm:gap-4 md:gap-6 px-2 sm:px-4 pt-[4rem] w-full min-w-0">
-                    {submitted ? (
-                        <div className="w-full flex gap-2 sm:gap-4 md:gap-6">
-                            {/* Sidebar Desktop - hidden en móviles */}
-                            <div className="hidden md:flex w-64 flex-shrink-0 sticky top-0 h-full overflow-y-auto">
-                                <FilterSidebar
-                                    onGenreSelect={handleGenreSelect}
-                                    onFilterSelect={handleFilterSelect}
-                                    activeGenre={activeGenre}
-                                    activeFilter={activeFilter}
-                                />
-                            </div>
-
-                            {/* Contenido SCROLLEABLE */}
-                            <div className="flex-1 overflow-y-auto overflow-x-hidden pt-4 w-full min-w-0 px-1 sm:px-2 md:px-4">
-                                {!isLoading && gamesToDisplay.length > 0 && (
-                                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">{currentTitle}</h1>
-                                )}
-
-                                <div className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 sm:gap-2 md:gap-8">
-                                    {isLoading && (
-                                        <>
-                                            {[...Array(8)].map((_, i) => (
-                                                <GameCardSkeleton key={`skeleton-${i}`} />
-                                            ))}
-                                        </>
-                                    )}
-
-                                    {!isLoading && gamesToDisplay.map(game => (
-                                        <GameCard 
-                                            key={game.id}
-                                            game={game}
-                                            userId={user?.id}
-                                            isInLibrary={libraryGameIds.has(game.id)}
-                                            onAddToLibrary={() => setLibraryGameIds(new Set([...libraryGameIds, game.id]))}
-                                        />
-                                    ))}
-                                </div>
-
-                                {!isLoading && gamesToDisplay.length === 0 && (
-                                    <p className="text-center text-gray-400 mt-4">No se encontraron juegos</p>
-                                )}
-
-                                {/* Paginación - para búsquedas y filtros */}
-                                {submitted && totalPages > 1 && (
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        onPageChange={handlePageChange}
-                                        isLoading={filterLoading}
-                                    />
-                                )}
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="w-full flex gap-2 sm:gap-4 md:gap-6">
-                            {/* Sidebar Desktop - hidden en móviles */}
-                            <div className="hidden md:flex w-64 flex-shrink-0 sticky top-0 h-full overflow-y-auto">
-                                <FilterSidebar
-                                    onGenreSelect={handleGenreSelect}
-                                    onFilterSelect={handleFilterSelect}
-                                    activeGenre={activeGenre}
-                                    activeFilter={activeFilter}
-                                />
-                            </div>
-                            
-                            {/* Contenido SCROLLEABLE */}
-                            <div className="flex-1 overflow-y-auto overflow-x-hidden pt-4 w-full min-w-0 px-1 sm:px-2">
-                                <MainPage />
-                            </div>
-                        </div>
-                    )}
-            </div>
+  // Limpiar filtro de búsqueda
+  const handleClearSearchTerm = () => {
+    clearFilters();
+    setHeroDisabledManually(true);
+    navigate("/explore");
+  };
+  // Manejar cambio de géneros
+  const handleGenresChange = (genreIds: number[]) => {
+    setSelectedGenreIds(genreIds);
+    setGenres(genreIds);
+  };
+  // Manejar cambio de ordenamiento
+  const handleOrderingChange = (ordering: string) => {
+    setActiveOrdering(ordering);
+    setOrdering(`-${ordering}`);
+  };
+  // Renderizar contenido de juegos
+  const renderGamesContent = () => {
+    if (loading) {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center sm:justify-items-start">
+          {Array.from({ length: 8 }, (_, i) => (
+            <GameCardSkeleton key={`skeleton-${i}-${Date.now()}`} />
+          ))}
         </div>
-    )
+      );
+    }
+    if (games.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <p className="text-yellow-300/60 text-lg">Sin resultados</p>
+          <p className="text-yellow-300/40 text-sm mt-2">
+            Intenta con otros filtros o busca un juego diferente
+          </p>
+        </div>
+      );
+    }
+    return (
+      <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center sm:justify-items-start">
+          {games.map(game => (
+            <GameCard
+              key={game.id}
+              game={game}
+              userId={user?.id}
+              isInLibrary={libraryGameIds.has(game.id)}
+              onAddToLibrary={() => setLibraryGameIds(new Set([...libraryGameIds, game.id]))}
+            />
+          ))}
+        </div>
 
-}
+        {/* Paginación */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-8">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={changePage}
+            />
+          </div>
+        )}
+      </>
+    );
+  };
+
+
+  // Mostrar skeleton si está cargando con filtros de URL (géneros o tags)
+  const hasUrlFilters = genresParamInitial.current || tagsParam;
+  if (loadingAll && hasUrlFilters && !heroInitializedRef) {
+    return <SearchPageFiltersLoadingSkeleton />;
+  }
+
+  return (
+    <div className="w-full flex flex-col px-4 py-0 md:px-6 md:py-6 bg-black/10">
+      {/* Título del carrusel si hay filtros */}
+      {/* HERO TITLE */}
+{heroTitle && !searchTerm && !heroDisabledManually && (
+  <motion.div
+    initial={{ opacity: 0, filter: "blur(8px)" }}
+    animate={{ opacity: 1, filter: "blur(0px)" }}
+    transition={{ duration: 0.6, ease: "easeOut" }}
+   
+  >
+    <div className="flex items-center justify-center gap-4 my-6">
+      
+      {/* Línea izquierda */}
+      <motion.div
+        initial={{ width: 0, opacity: 0 }}
+        animate={{ width: "100px", opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="h-[2px] bg-cy"
+      />
+
+      {/* Texto */}
+      <motion.h2
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="text-cy text-2xl md:text-5xl text-center whitespace-nowrap font-bold ine-clamp-2 uppercase tracking-wide"
+      >
+        {heroTitle.toUpperCase()}
+      </motion.h2>
+
+      {/* Línea derecha */}
+      <motion.div
+        initial={{ width: 0, opacity: 0 }}
+        animate={{ width: "100px", opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="h-[2px] bg-cy"
+      />
+      
+    </div>
+  </motion.div>
+)}
+
+{/* HERO CAROUSEL */}
+{heroGames.length > 0 && !searchTerm && !heroDisabledManually && (
+  <motion.div
+    initial={{ opacity: 0, y: 40 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+    className="flex flex-row justify-center pb-16"
+  >
+    <HeroCarousel
+      games={heroGames}
+      loading={heroLoading}
+      
+    />
+  </motion.div>
+)}
+      {/* Contenido Principal */}
+      <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-12 mt-8">
+        {/* Sidebar de Filtros - Solo Desktop */}
+        <div className="hidden md:block">
+          <GenresSidebarFilter
+            selectedGenres={selectedGenreIds}
+            onGenresChange={handleGenresChange}
+            onOrderingChange={handleOrderingChange}
+            activeOrdering={activeOrdering}
+            searchTerm={searchTerm}
+            onClearSearchTerm={handleClearSearchTerm}
+          />
+        </div>
+
+        {/* Grid de Juegos */}
+        <main className="flex flex-col gap-6">
+          {/* Encabezado con Título y Botón de Filtros Móvil */}
+          <div className="flex flex-col items-start justify-between gap-4">
+            <div className="flex-1">
+              <h2 className="text-xl md:text-3xl font-bold text-cy uppercase tracking-wide">
+                {searchTerm
+                  ? `Resultados de búsqueda: ${searchTerm.toUpperCase()}`
+                  : selectedTagNames.length > 0
+                  ? `Filtrado por: ${selectedTagNames.join(", ")}`
+                  : selectedGenreIds.length > 0
+                  ? `Filtrado por géneros`
+                
+                  : "Descubre Juegos"}
+              </h2>
+              {games.length > 0 && (
+                <p className="text-yellow-300/60 text-sm mt-1">
+                  {games.length} juegos encontrados
+                </p>
+              )}
+            </div>
+
+            {/* Botón Filtros Mobile */}
+            <button
+              onClick={() => setShowMobileFilters(true)}
+              className="md:hidden flex items-center gap-2 px-3 py-2 bg-yellow-200/20 hover:bg-yellow-400/30 text-cy rounded-lg transition-colors"
+            >
+              <FiFilter size={18} />
+              <span className="text-sm font-medium">Filtros</span>
+            </button>
+          </div>
+
+          {/* Juegos */}
+          {renderGamesContent()}
+        </main>
+      </div>
+
+      {/* Modal de Filtros Mobile */}
+      <AnimatePresence>
+        {showMobileFilters && (
+          <>
+            {/* Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowMobileFilters(false)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden"
+            />
+
+            {/* Modal */}
+            <motion.div
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 100 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="fixed bottom-0 left-0 right-0 bg-black border-t border-yellow-400/30 rounded-t-2xl z-50 md:hidden max-h-[80vh] overflow-y-auto"
+            >
+              {/* Encabezado del Modal */}
+              <div className="sticky top-0 flex items-center justify-between px-4 py-4 border-b border-yellow-400/20 bg-black">
+                <h3 className="text-lg font-bold text-cy">Filtros</h3>
+                <button
+                  onClick={() => setShowMobileFilters(false)}
+                  className="text-cy hover:text-yellow-200 transition-colors"
+                >
+                  <FiX size={24} />
+                </button>
+              </div>
+
+              {/* Contenido de Filtros */}
+              <div className="px-4 py-4">
+                <GenresSidebarFilter
+                  selectedGenres={selectedGenreIds}
+                  onGenresChange={handleGenresChange}
+                  onOrderingChange={handleOrderingChange}
+                  activeOrdering={activeOrdering}
+                  searchTerm={searchTerm}
+                  onClearSearchTerm={handleClearSearchTerm}
+                  isMobileModal={true}
+                  onApplyFilters={() => setShowMobileFilters(false)}
+                />
+              </div>
+
+              {/* Espaciador para que no quede pegado */}
+              <div className="h-4" />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
