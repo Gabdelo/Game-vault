@@ -1,26 +1,40 @@
 import { Link } from "react-router-dom"
 import { FaTwitter, FaFacebook, FaLinkedin } from "react-icons/fa"
 import { useState } from "react"
+import { sendFeedback } from "@/services/feedback"
 
 export const Footer = () => {
-    const [formData, setFormData] = useState({ nombre: "", mensaje: "" })
+    const [formData, setFormData] = useState({ email: "", message: "" })
+    const [loading, setLoading] = useState(false)
+    const [success, setSuccess] = useState(false)
 
     const handleChange = (e:any) => {
         const { name, value } = e.target
         setFormData(prev => ({ ...prev, [name]: value }))
     }
 
-    const handleSubmit = (e:any) => {
+    const handleSubmit = async (e:any) => {
         e.preventDefault()
-        console.log("Formulario enviado", formData)
-        setFormData({ nombre: "", mensaje: "" })
+        if (!formData.email || !formData.message) return
+        
+        setLoading(true)
+        try {
+            await sendFeedback(formData.email, formData.message)
+            setSuccess(true)
+            setFormData({ email: "", message: "" })
+            setTimeout(() => setSuccess(false), 3000)
+        } catch (error) {
+            console.error("Error al enviar feedback:", error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
-        <footer className="text-gray-400 pb-8 px-4 w-full bg-black/90">
+        <footer className="text-gray-400 pb-8  w-full bg-black/90">
             <div className="w-full h-[1px] bg-cyan-400 shadow-[0_0_10px_#22d3ee,0_0_20px_#22d3ee,0_0_40px_#22d3ee]"></div>
 
-            <div className="container mx-auto mt-6">
+            <div className="container mx-auto mt-6 px-4">
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
 
@@ -55,29 +69,36 @@ export const Footer = () => {
                         <form onSubmit={handleSubmit} className="flex flex-col gap-2">
 
                             <input
-                                type="text"
-                                name="nombre"
-                                placeholder="Tu nombre"
-                                value={formData.nombre}
+                                type="email"
+                                name="email"
+                                placeholder="Tu email"
+                                value={formData.email}
                                 onChange={handleChange}
+                                required
                                 className="px-3 py-2 text-xs bg-black border border-gray-600 text-white focus:outline-none focus:border-cyan-400"
                             />
 
                             <textarea
-                                name="mensaje"
+                                name="message"
                                 placeholder="Escribe tu mensaje..."
                                 rows={3}
-                                value={formData.mensaje}
+                                value={formData.message}
                                 onChange={handleChange}
+                                required
                                 className="px-3 py-2 text-xs bg-black border border-gray-600 text-white resize-none focus:outline-none focus:border-cyan-400"
                             />
 
                             <button
                                 type="submit"
-                                className="bg-cyan-400 text-black text-xs py-2 hover:bg-cyan-300 transition font-semibold"
+                                disabled={loading}
+                                className="bg-cyan-400 text-black text-xs py-2 hover:bg-cyan-300 transition font-semibold disabled:opacity-50"
                             >
-                                Enviar
+                                {loading ? "Enviando..." : "Enviar"}
                             </button>
+
+                            {success && (
+                                <p className="text-xs text-green-400">¡Mensaje enviado correctamente!</p>
+                            )}
                         </form>
 
                         {/* Redes */}

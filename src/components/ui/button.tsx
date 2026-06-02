@@ -14,7 +14,7 @@ const CLIP = "polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%)"
 
 const variantStyles: Record<Variant, { bg: string; shadow: string; hoverBg: string; textColor: string; tagColor: string; tagLabel: string }> = {
   primary: {
-    bg: "#fcee0a",
+    bg: "#F2FF00",
     shadow: "#0c3cda",
     hoverBg: "#ffe800",
     textColor: "#0a0a0f",

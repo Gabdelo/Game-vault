@@ -74,7 +74,7 @@ export const HorizontalCarousel = ({
     return (
         <div className="ml-2">
             {/* Título */}
-          <h2 className="text-2xl font-bold textcyblack-white px-4">{title}</h2>
+          <h2 className="text-2xl font-bold textcyblack-white ">{title}</h2>
 
             {/* Carrusel horizontal */}
             <div className="relative ">
@@ -83,7 +83,7 @@ export const HorizontalCarousel = ({
                     <motion.button
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 z-20 text-cy bg-black/50 p-2 rounded-full backdrop-blur-sm transition-all"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 z-20 text-cy bg-black/50 p-2 backdrop-blur-sm transition-all"
                         onClick={() => scroll('left')}
                     >
                         <svg className="w-6 h-6 text-cy transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,7 +99,7 @@ export const HorizontalCarousel = ({
                     className="overflow-x-auto scrollbar-hide py-6 px-8 snap-x snap-mandatory scroll-smooth"
                     style={{ scrollBehavior: 'smooth' }}
                 >
-                    <div className="flex gap-32 md:gap-24 lg:gap-24 pb-4 w-max">
+                    <div className="flex gap-4 sm:gap-6 md:gap-5">
                         {loading ? (
                             <>
                                 {[...Array(6)].map((_, i) => (
@@ -132,7 +132,7 @@ export const HorizontalCarousel = ({
                     <motion.button
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full backdrop-blur-sm transition-all"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 p-2 backdrop-blur-sm transition-all"
                         onClick={() => scroll('right')}
                     >
                         <svg className="w-6 h-6 text-cy transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">

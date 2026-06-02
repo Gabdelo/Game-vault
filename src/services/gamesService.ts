@@ -32,7 +32,7 @@ export const getGamesByIds = async (ids: number[]): Promise<GamesResponse> => {
 }
 
 export const searchGames = async (query: string, page: number = 1, signal?: AbortSignal): Promise<GamesResponse> => {
-    return apiFetch(`/games?search=${query}&page=${page}&page_size=40`, signal);
+    return apiFetch(`/games?search=${query}&page=${page}&page_size=400`, signal);
 }
 export const isGameInLibrary = async (rawgId: number, userId: string): Promise<boolean> => {
     
@@ -554,7 +554,7 @@ console.log('added:', completeGame.added)
                     return completeGame
 
                 } catch (error: any) {
-                    // Si es error 403, solo retornar el juego sin guardar en Directus
+                  
                     if (error?.status === 403 || error?.message?.includes("permission")) {
                         console.log(`Sin permisos para guardar juego ${game.id} en Directus, devolviendo datos de RAWG`)
                         return game

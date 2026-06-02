@@ -40,7 +40,41 @@ export const GameHero = ({
     const buttons = useMemo(() => {
         const buttonsList = []
 
-        // 1. Botón de Estado (solo si está en biblioteca)
+      
+        // 2. Botón Agregar a Biblioteca
+        if (user?.id && !isInLibrary) {
+            buttonsList.push({
+                id: 'add',
+                type: 'primary',
+                render: () => (
+                    <button
+                        onClick={onAddToLibrary}
+                        disabled={addingToLibrary}
+                        className="px-5 py-2.5 text-sm font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {addingToLibrary ? "Agregando..." : "+ Añadir a biblioteca"}
+                    </button>
+                )
+            })
+        }
+
+        // 3. Botón Eliminar de Biblioteca
+        if (user?.id && isInLibrary) {
+            buttonsList.push({
+                id: 'delete',
+                type: 'danger',
+                render: () => (
+                    <button
+                        onClick={onDeleteFromLibrary}
+                        disabled={deletingFromLibrary}
+                        className="px-5 py-2.5 text-sm font-semibold bg-red-500/20 text-red-300 border border-red-500/40 hover:bg-red-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {deletingFromLibrary ? "Eliminando..." : "✕ Eliminar de biblioteca"}
+                    </button>
+                )
+            })
+        }
+          // 1. Botón de Estado (solo si está en biblioteca)
         if (user?.id && isInLibrary) {
             buttonsList.push({
                 id: 'status',
@@ -55,7 +89,7 @@ export const GameHero = ({
                                     : "bg-white/10 text-white border-white/20 hover:bg-white/20"
                             }`}
                         >
-                            {statusValue ? statusConfig[statusValue].label : "+ ESTADO"}
+                            {statusValue ? statusConfig[statusValue].label : "ESTADO"}
                             <svg
                                 className={`w-4 h-4 transition-transform ${isStatusDropdownOpen ? "rotate-180" : ""}`}
                                 fill="none"
@@ -94,39 +128,6 @@ export const GameHero = ({
             })
         }
 
-        // 2. Botón Agregar a Biblioteca
-        if (user?.id && !isInLibrary) {
-            buttonsList.push({
-                id: 'add',
-                type: 'primary',
-                render: () => (
-                    <button
-                        onClick={onAddToLibrary}
-                        disabled={addingToLibrary}
-                        className="px-5 py-2.5 text-sm font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {addingToLibrary ? "Agregando..." : "+ Agregar a biblioteca"}
-                    </button>
-                )
-            })
-        }
-
-        // 3. Botón Eliminar de Biblioteca
-        if (user?.id && isInLibrary) {
-            buttonsList.push({
-                id: 'delete',
-                type: 'danger',
-                render: () => (
-                    <button
-                        onClick={onDeleteFromLibrary}
-                        disabled={deletingFromLibrary}
-                        className="px-5 py-2.5 text-sm font-semibold bg-red-500/20 text-red-300 border border-red-500/40 hover:bg-red-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {deletingFromLibrary ? "Eliminando..." : "✕ Eliminar de biblioteca"}
-                    </button>
-                )
-            })
-        }
 
         // 4. Sitio Oficial (siempre aparece si existe)
         if (gameDetail.website) {

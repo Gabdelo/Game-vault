@@ -25,7 +25,7 @@ export const StartPage = () => {
       }, []);
 
     return (
-        <div className="bg-black/90">
+        <div className="BG-CY">
             <div className="z-0 relative flex flex-col items-center justify-between h-screen overflow-hidden ">
                 <motion.img
                 initial={{ scale: 2 , opacity: 0}}
@@ -60,9 +60,9 @@ export const StartPage = () => {
                 />
                 <motion.div
 
-                className=" flex flex-col items-center justify-between min-h-screen relative"
+                className=" flex flex-col items-center justify-between min-h-screen relative py-10 sm:py-16 md:py-24 px-4 sm:px-6 md:px-8"
              >
-                <div className="flex flex-row w-full justify-end gap-2 sm:gap-4 md:gap-6 mt-4 sm:mt-8 md:mt-10 mr-2 sm:mr-8 md:mr-16">
+                <div className="flex flex-row w-full justify-end gap-2 sm:gap-4 md:gap-6 mt-4 sm:mt-8 md:-mt-6 mr-2 sm:mr-8 md:mr-0">
                     <CyberButton className="cb-secondary text-xs sm:text-sm md:text-base" >
                         <Link to="/welcome" state={{ isInLogin: false }}>REGISTRARSE</Link>
                     </CyberButton>
@@ -71,8 +71,8 @@ export const StartPage = () => {
                     </CyberButton>
                 </div>
 
-                <div className="flex flex-row items-center justify-center " style={{ zIndex: -2 }}>
-                <HackerText text="BEST GAMES" speed={45} className="text-7xl sm:text-5xl md:text-8xl lg:text-[10rem] font-black text-center text-white text-stroke-cyan-300 px-2"></HackerText>
+                <div className="flex flex-row items-center justify-center px-2 sm:px-3 md:px-6 mb-0 sm:mb-3 md:mb-4" style={{ zIndex: -2 }}>
+                <HackerText text="BEST GAMES" speed={45} className="text-8xl sm:text-7xl md:text-7xl lg:text-[8rem] font-black text-center text-white text-stroke-cyan-300 px-1 leading-none"></HackerText>
 
             </div>
 
@@ -80,11 +80,11 @@ export const StartPage = () => {
                 initial={{ opacity: 0, y: 0, x: 0, scale: 0.5 }}
                 animate={{ opacity: 1, y: 0 , x: 0, scale: 1}}
                 transition={{duration: 1, ease: "linear" }}
-                className=" z-10 ">
+                className=" z-10 px-4 sm:px-6 md:px-8 mb-0 sm:mb-3 md:mb-4">
 
 
                 <Glitch trigger="loop" options={{ frames: 6, speed: 10, intensity: 10 }} >
-                     <h1 className="text-7xl sm:text-3xl md:text-9xl lg:text-9xl font-bold tracking-wide text-cy uppercase text-center">
+                     <h1 className="text-7xl sm:text-8xl md:text-8xl lg:text-9xl font-bold tracking-wide text-cy uppercase text-center leading-none">
                         THE <br /> ZONE
                      </h1>
 
@@ -97,17 +97,17 @@ export const StartPage = () => {
                 </Link>
                 <motion.button
                     onClick={handleScrollDown}
-                    className="flex items-center justify-center w-16 h-16 rounded-full bg-cy text-black hover:bg-yellow-300 transition-colors cursor-pointer my-8 "
+                    className="flex items-center justify-center w-12 sm:w-14 md:w-16 h-12 sm:h-14 md:h-16 rounded-full bg-cy text-black hover:bg-yellow-300 transition-colors cursor-pointer mt-0 sm:mt-3 md:mt-4 "
                     animate={{ y: [0, 10, 0] }}
                     transition={{ duration: 2, repeat: Infinity }}
                 >
-                    <FiChevronDown size={32} />
+                    <FiChevronDown size={24} className="sm:w-7 sm:h-7 md:w-8 md:h-8" />
                 </motion.button>
             </motion.div>
 
             </div>
             <div className=" flex flex-row justify-center py-8 text-white bg-cy">
-                <div className="grid grid-cols-1 md:grid-cols-2 h-full w-full gap-2 sm:gap-3 md:gap-6 px-2 sm:px-3 md:px-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 h-full w-full gap-2 sm:gap-3 md:gap- px-2 sm:px-3 md:px-4">
 
                     {/* Sección 1: Imagen de fondo con texto superpuesto */}
                     <motion.div 
@@ -159,11 +159,11 @@ export const StartPage = () => {
                                 transition={{ duration: 0.6, delay: 0.5 }}
                                 viewport={{ once: true, margin: "-100px" }}
                             >
-                                <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-cyan-300">
-                                    Controla y descubre nuevos videojuegos
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-cyan-300">
+                                    Controla y descubre nuevos juegos
                                 </h1>
                                 <p className="text-xs sm:text-sm line-clamp-4">
-                                    Organiza todos tus juegos en un solo lugar, guarda tus favoritos y haz seguimiento de lo que has jugado. Puntúa cada título, escribe tus impresiones y descubre nuevas recomendaciones basadas en tus gustos. Comparte tu experiencia con otros jugadores y encuentra fácilmente tu próxima aventura.
+                                    Organiza todos tus juegos en un solo lugar 
                                 </p>
                             </motion.div>
                             <motion.div 
@@ -189,7 +189,7 @@ export const StartPage = () => {
 
                     {/* Sección 2: Imagen de fondo con texto superpuesto */}
                     <motion.div 
-                        className="h-full flex flex-col gap-2 sm:gap-4 bg-black border border-black/10 px-8 py-4" 
+                        className="h-full flex flex-col gap-0 sm:gap-0 bg-black border border-black/10 px-8 py-4" 
                         style={{clipPath: 'polygon(20% 0%, 90% 0%, 100% 10%, 100% 80%, 100% 100%, 10% 100%, 0% 90%, 0 0)'}}
                         initial={{ opacity: 0, x: 50, y: 30 }}
                         whileInView={{ opacity: 1, x: 0, y: 0 }}
@@ -197,23 +197,23 @@ export const StartPage = () => {
                         viewport={{ once: true, margin: "-100px" }}
                     >
                         <motion.h1 
-                            className="px-2 sm:px-5 text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white"
+                            className="px-2 sm:px-5 text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white sm:-mb-3 md:-mb-4"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.4 }}
-                            viewport={{ once: true, margin: "-100px" }}
+                            viewport={{ once: true }}
                         >
-                            TENEMOS TODOS LOS JUEGOS QUE TE GUSTAN
+                            TENEMOS TODOS LOS JUEGOS 
                         </motion.h1>
                         <motion.div 
-                            className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 flex-1"
+                            className="grid grid-cols-1 sm:grid-cols-2 gap-0 sm:gap-1 flex-1 items-center md:px-5"
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
                             transition={{ duration: 0.8, delay: 0.3 }}
                             viewport={{ once: true, margin: "-100px" }}
                         >
                             <motion.div 
-                                className="relative w-full bg-gray-500 h-48 sm:h-full"
+                                className="relative bg-gray-500 h-32 sm:h-64"
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 transition={{ duration: 0.6, delay: 0.5 }}
@@ -231,17 +231,17 @@ export const StartPage = () => {
                                 />
                             </motion.div>
                             <motion.div 
-                                className="w-full h-full flex flex-col overflow-hidden px-2 sm:px-4"
+                                className="w-full h-full flex flex-col overflow-hidden px-2 sm:px-4 md:pt-8"
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: 0.7 }}
                                 viewport={{ once: true, margin: "-100px" }}
                             >
-                                <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-cyan-300">
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-cyan-300">
                                     Cada juego cuenta una historia
                                 </h1>
                                 <p className="text-xs sm:text-sm line-clamp-4 mb-7">
-                                    Revive tus aventuras, recuerda los mundos que exploraste y los desafíos que superaste. Convierte cada partida en un recuerdo y construye una línea del tiempo con todo lo que has vivido dentro del universo gaming.
+                                    Revive tus aventuras, recuerda los mundos que exploraste y los desafíos que superaste. 
                                 </p>
                             </motion.div>
                         </motion.div>
@@ -249,11 +249,11 @@ export const StartPage = () => {
                 </div>
             </div>
             <div className=" text-white flex items-center justify-center sm:py-12 md:py-6 px-2 sm:px-4 bg-cy ">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-10 w-full md:w-[80%]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-10 w-full md:w-[85%]">
 
                 {/* IZQUIERDA → TEXTO */}
                 <motion.div 
-                    className="flex flex-col justify-center gap-4 bg-black p-11 md:p-8" 
+                    className="flex flex-col justify-center gap-4 bg-black p-11 md:p-20" 
                     style={{clipPath: 'polygon(20% 0%, 100% 0, 100% 20%, 100% 80%, 100% 80%, 80% 100%, 0 100%, 0 23%)'}}
                     initial={{ opacity: 0, x: -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -324,6 +324,7 @@ export const StartPage = () => {
 
             </div>
             </div>
+            <div className="py-8 md:py-18 bg-cy"></div>
             <Footer />
             
         </div>

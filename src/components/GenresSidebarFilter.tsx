@@ -103,9 +103,9 @@ export const GenresSidebarFilter = ({
                 checked={selectedGenres.includes(genre.id)}
 
                 onChange={() => handleGenreToggle(genre.id)}
-                className="w-4 h-4 accent-yellow-200"
+                className="w-4 h-4 accent-cy"
               />
-              <span className="text-cy text-sm hover:text-yellow-300">
+              <span className="text-cy text-sm">
                 {genre.name}
               </span>
             </label>

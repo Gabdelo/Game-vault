@@ -73,9 +73,9 @@ export const LibrarySidebar = ({
                                 name="genre"
                                 checked={filters.genre === genre.name}
                                 onChange={() => setFilter("genre", genre.name)}
-                                className="w-4 h-4 cursor-pointer accent-yellow-200"
+                                className="w-4 h-4 cursor-pointer accent-cy"
                             />
-                            <span className="text-cy text-sm hover:text-yellow-300">{genre.name}</span>
+                            <span className="text-cy text-sm ">{genre.name}</span>
                         </label>
                     ))}
                 </div>

@@ -117,8 +117,8 @@ export const Main = () => {
 
   return (
     <div className="w-full bg-black/10 pb-16">
-      <div className="mx-auto lg:mx-24 flex flex-col gap-4 sm:gap-6 md:gap-8 justify-center items-center">
-        <div className="h-screen flex flex-col gap-8 pt-16">
+      <div className="mx-auto lg:mx-2 flex flex-col gap-4 sm:gap-6 md:gap-8 justify-center items-center">
+        <div className="h-screen flex flex-col gap-8 md:gap-16 pt-16">
           <div className="flex items-center justify-center gap-4">
             {/* Línea izquierda */}
             <motion.div
@@ -153,8 +153,8 @@ export const Main = () => {
         </div>
 
         {/* FILAS NETFLIX */}
-        <div className="w-full space-y-8">
-          <div className=" h-screen flex flex-col gap-4 justify-center items-center pt-12">
+        <div className="w-full">
+          <div className=" md:h-screen flex flex-col gap-4 justify-center items-center ">
             <div className="flex flex-row justify-center items-center ">
             <h2 className="text-white text-center">
               EXPLORAR TUS GÉNEROS FAVORITOS

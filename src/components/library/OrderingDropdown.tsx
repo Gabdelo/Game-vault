@@ -32,7 +32,7 @@ export const OrderingDropdown = ({
                 </svg>
             </button>
             {isOpen && (
-                <div className={`absolute right-0 mt-2 bg-gray-900 border border-yellow-400/20 rounded-lg shadow-lg z-50 ${isSm ? 'w-44' : 'w-48'}`} data-dropdown="true" >
+                <div className={`absolute right-0 mt-2 bg-gray-900 border border-yellow-400/20  shadow-lg z-50 ${isSm ? 'w-44' : 'w-48'}`} data-dropdown="true" >
                     {STATUS_OPTIONS.map((order) => (
                         <button
                             key={String(order.value)}
@@ -42,8 +42,8 @@ export const OrderingDropdown = ({
                             }}
                             className={`w-full px-4 py-2 text-left transition-colors first:rounded-t-lg last:rounded-b-lg ${isSm ? 'text-xs' : 'text-sm'} ${
                                 currentOrder === order.value
-                                    ? "bg-yellow-400/40 text-yellow-300 font-semibold"
-                                    : "text-gray-300 hover:bg-gray-800 hover:text-yellow-300"
+                                    ? " text-cy font-semibold"
+                                    : "text-gray-300 hover:bg-gray-800"
                             }`}
                         >
                             {order.label}

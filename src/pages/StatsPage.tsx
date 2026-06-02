@@ -37,7 +37,7 @@ export const StatsPage = () => {
             {/* Header */}
             <div className="mb-8 sm:mb-12 flex items-center justify-center gap-4">
                 <Glitch trigger="loop" options={{ frames: 6, speed: 10, intensity: 10 }}>
-                <h2 className="text-2xl sm:text-3xl md:text-6xl font-bold tracking-wide text-white uppercase">
+                <h2 className="text-3xl sm:text-3xl md:text-6xl font-bold tracking-wide text-white uppercase">
                      ANALÍTICAS
                 </h2>
                 </Glitch>
@@ -51,7 +51,7 @@ export const StatsPage = () => {
                 </div>
             )}
 
-            {/* Empty state */}
+            {/* Empty state */} 
             {!loading && totalGames === 0 && (
                 <div className="flex flex-col items-center justify-center py-24 text-gray-500">
                     <p className="text-5xl mb-4"></p>

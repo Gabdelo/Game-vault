@@ -206,7 +206,7 @@ export const SearchPage = () => {
 
         {/* Paginación */}
         {totalPages > 1 && (
-          <div className="flex justify-center mt-8">
+          <div className="flex justify-center mb-8">
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
@@ -309,23 +309,17 @@ export const SearchPage = () => {
                   ? `Filtrado por: ${selectedTagNames.join(", ")}`
                   : selectedGenreIds.length > 0
                   ? `Filtrado por géneros`
-                
                   : "Descubre Juegos"}
               </h2>
-              {games.length > 0 && (
-                <p className="text-yellow-300/60 text-sm mt-1">
-                  {games.length} juegos encontrados
-                </p>
-              )}
             </div>
 
             {/* Botón Filtros Mobile */}
             <button
               onClick={() => setShowMobileFilters(true)}
-              className="md:hidden flex items-center gap-2 px-3 py-2 bg-yellow-200/20 hover:bg-yellow-400/30 text-cy rounded-lg transition-colors"
+              className="flex items-center justify-center gap-2 px-3 py-2 bg-yellow-200/10 text-cy border border-yellow-200/20 hover:bg-yellow-200/20 transition-colors text-sm font-medium"
             >
-              <FiFilter size={18} />
-              <span className="text-sm font-medium">Filtros</span>
+              <FiFilter size={16} />
+              <span>Filtros</span>
             </button>
           </div>
 

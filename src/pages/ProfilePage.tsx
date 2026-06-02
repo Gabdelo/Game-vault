@@ -193,14 +193,14 @@ export const ProfilePage = () => {
                                                 )}
                                                 {/* Rating overlay */}
                                                 {game.rating && (
-                                                    <div className="absolute top-2 left-2 bg-black/70 px-2 py-1 text-xs font-semibold text-yellow-300 flex items-center gap-1">
+                                                    <div className="absolute top-2 left-2 bg-black/70 px-2 py-1 text-xs font-semibold text-cy flex items-center gap-1">
                                                          {game.rating.toFixed(1)}
                                                     </div>
                                                 )}
                                                 {/* Status badge */}
                                                     {game.status && (
                                                         <div
-                                                            className={`absolute top-2 right-2 w-5 h-5 flex items-center justify-center text-xs text-white ${getStatusColor(game.status)}`}
+                                                            className={`absolute top-2 right-2 w-5 h-5 flex items-center rounded-full justify-center text-xs text-white ${getStatusColor(game.status)}`}
                                                             title={getStatusLabel(game.status)}
                                                         >
                                                             ●
@@ -319,7 +319,7 @@ export const ProfilePage = () => {
                                                     {/* Status badge */}
                                                     {game.status && (
                                                         <div
-                                                            className={`absolute top-2 right-2 w-5 h-5 flex items-center justify-center text-xs text-white ${getStatusColor(game.status)}`}
+                                                            className={`absolute top-2 right-2 w-5 h-5 flex items-center rounded-full justify-center text-xs text-white ${getStatusColor(game.status)}`}
                                                             title={getStatusLabel(game.status)}
                                                         >
                                                             ●
@@ -328,8 +328,8 @@ export const ProfilePage = () => {
 
                                                     {/* Rating overlay */}
                                                     {game.rating && (
-                                                        <div className="absolute top-2 left-2 bg-black/70 px-2 py-1 text-xs font-semibold text-yellow-300 flex items-center gap-1">
-                                                            ⭐ {game.rating.toFixed(1)}
+                                                        <div className="absolute top-2 left-2 bg-black/70 px-2 py-1 text-xs font-semibold text-cy flex items-center gap-1">
+                                                             {game.rating.toFixed(1)}
                                                         </div>
                                                     )}
                                                 </div>

@@ -14,15 +14,14 @@ export function GameSearch({
   value: controlled,
   onChange,
   onKeyDown,
-  placeholder = "SEARCH TITLES...",
-  resultCount,
+  placeholder = "Busca tus juegos...",
 }: GameSearchProps) {
   const [internal, setInternal] = useState("");
   const isControlled = controlled !== undefined;
   const value = isControlled ? controlled : internal;
   const inputRef = useRef<HTMLInputElement>(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const { games: searchResults, loading: searchLoading } = useSearch(value);
+  const { games: searchResults, loading: searchLoading, count: totalCount } = useSearch(value);
 
   const handleChange = (v: string) => {
     if (!isControlled) setInternal(v);
@@ -112,7 +111,7 @@ export function GameSearch({
           )}
           {!searchLoading && searchResults.length > 0 && (
             <div>
-              <p className="text-xs text-cyan-300/90 mb-2">{resultCount} results</p>
+              <p className="text-xs text-cyan-300/90 mb-2">Mostrando {Math.min(8, searchResults.length)} de {totalCount} resultados</p>
             <ul className="divide-y divide-gray-900">
               {searchResults.slice(0, 8).map(game => (
                 <Link key={game.id} to={`/game/${game.id}`}>

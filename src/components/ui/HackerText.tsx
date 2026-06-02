@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 const CHARS =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" +
-  "0123456789¡!¿?@#$%^&*()_+-=[]{};:'\",.<>/\\|";
+  "012345678.<>/\\|";
 
 interface HackerTextProps {
   text: string;

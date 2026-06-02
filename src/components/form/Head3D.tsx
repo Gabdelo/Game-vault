@@ -105,10 +105,10 @@ export default function ThreeScene({ isInLogin }: { isInLogin: boolean }) {
 
   return (
     
-    <div className="w-full h-full  rounded-[90px] p-[4.3rem] ">
+    <div className="w-full h-[90vh]  rounded-[90px] p-[4.3rem] ">
       <CyberBox className="w-full h-full" label="EXTRACTING DATA FROM USER BRAIN..."
       bottomLabel="v2.4.1"       // bottom-right, semitransparente
-  rightLabel="SECURE ZONE"
+
   cornerLines
   glow
   accentColor="#00F7FF"

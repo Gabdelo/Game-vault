@@ -42,7 +42,7 @@ export const GameStats = ({
             {/* Rating personal */}
             {user?.id && isInLibrary && (
                 <StatCard label="Mi Rating">
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex items-center justify-start gap-2">
                         <StarRating
                             value={ratingValue}
                             onChange={(newRating) => {

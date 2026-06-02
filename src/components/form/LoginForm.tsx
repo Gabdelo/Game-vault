@@ -99,7 +99,7 @@ export default function LoginForm({
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
         />
         <h3 className="text-[10px] tracking-[0.2em] uppercase text-zinc-100">
-          GAME VAULT — AUTH SYSTEM
+          THE ZONE — AUTH SYSTEM
         </h3>
       </div>
 

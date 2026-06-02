@@ -151,7 +151,7 @@ export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
               className="flex flex-col items-center hover:text-cyan-400 transition-all text-cy"
             >
               <FiDatabase size={18} />
-              <span className="text-[10px] uppercase">Library</span>
+              <span className="text-[10px] uppercase">Biblioteca</span>
             </Link>
 
             {/* PROFILE */}
@@ -179,7 +179,7 @@ export const Navbar = ({ onSetQuery, onSetSubmitted }: NavbarProps) => {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 mt-2 w-52 rounded-xl bg-black/95 border border-yellow-400/20 shadow-xl overflow-hidden"
+                    className="absolute right-0 mt-2 w-52  bg-black/95 border border-yellow-400/20 shadow-xl overflow-hidden"
                   >
                     <Link
                       to="/friends"

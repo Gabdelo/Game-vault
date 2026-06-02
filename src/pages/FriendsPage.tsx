@@ -5,7 +5,7 @@ import { FriendsSection } from "@/components/friends/FriendsSection"
 import { PendingSection } from "@/components/friends/PendingSection"
 import { SentSection } from "@/components/friends/SentSection"
 import { SearchSection } from "@/components/friends/SearchSection"
-import { FiUsers, FiInbox, FiSend, FiPlus } from "react-icons/fi"
+import { FiUsers, FiInbox, FiSend, FiSearch } from "react-icons/fi"
 import { usePageTitle } from '@/hooks/usePageTitle'
 
 type TabType = "friends" | "pending" | "sent" | "search"
@@ -37,7 +37,7 @@ export const FriendsPage = () => {
     { id: "friends", label: "Amigos", icon: FiUsers, count: friends.length },
     { id: "pending", label: "Solicitudes", icon: FiInbox, count: pendingRequests.length },
     { id: "sent", label: "Enviadas", icon: FiSend, count: sentRequests.length },
-    { id: "search", label: "Añadir amigo", icon: FiPlus },
+    { id: "search", label: "Buscar usuarios", icon: FiSearch },
   ]
 
   const handleTabChange = (tabId: TabType) => {

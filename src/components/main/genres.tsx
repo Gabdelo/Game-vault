@@ -100,16 +100,16 @@ export const CarrusellGenres = ({
                                         >
                                         {/* Overlay gradiente */}
                                         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/80 group-hover:from-black/30 group-hover:via-black/50 group-hover:to-black/90 transition-all duration-300" />
-                                        
+
                                         {/* Border glow en hover */}
                                         <div className="absolute inset-0 border-2 border-yellow-400/0 group-hover:border-cy  transition-all duration-300" />
-                                        
+
                                         {/* Contenido centrado */}
                                         <div className="absolute inset-0 flex items-center justify-center">
                                             <h3 className="text-sm sm:text-lg md:text-xl font-bold text-white text-center px-2 sm:px-4 drop-shadow-lg group-hover:scale-110 transition-transform duration-300">
                                                 {genre.name}
                                             </h3>
-                                            
+
                                         </div>
                                         </div>
                                     </motion.div>

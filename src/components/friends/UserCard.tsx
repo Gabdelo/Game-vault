@@ -82,7 +82,7 @@ export default function UserCard({
                   ? "bg-blue-600/25 text-blue-300 border border-blue-500/30"
                   : status === "pending_received"
                   ? "bg-green-600/25 text-green-300 border border-green-500/30"
-                  : "bg-yellow-600/25 text-yellow-300 border border-yellow-500/30"
+                  : "bg-yellow-600/25 text-cy border border-yellow-500/30"
               }`}
             >
               {status === "friend"
@@ -98,7 +98,7 @@ export default function UserCard({
       {/* Buttons */}
       <div className={`grid gap-2 ${
         secondaryBtn 
-          ? "grid-cols-2 sm:grid-cols-[63%_16%_16%] " 
+          ? "grid-cols-[63%_16%_16%] sm:grid-cols-[63%_16%_16%] " 
           : "grid-cols-[80%_17%] "
       }`}>
         {/* Ver Perfil */}

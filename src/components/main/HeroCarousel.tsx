@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { Glitch } from "@/components/ui/Glitch";
@@ -22,7 +22,7 @@ export const HeroCarousel = ({
   games,
   loading = false,
 }: HeroCarouselProps) => {
-  const navigate = useNavigate();
+
   const [selectedIdx, setSelectedIdx] = useState(0);
   const selectedGame = games[selectedIdx];
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -127,7 +127,7 @@ export const HeroCarousel = ({
                 </div>
 
                 {/* Contenido - Derecha */}
-                <div className="flex flex-col  sm:p-4 md:p-8 text-white bg-black/40 rounded-lg sm:rounded-2xl overflow-y-auto max-h-[330px] sm:max-h-[400px] md:max-h-[560px]">
+                <div className="flex flex-col  sm:p-4 md:p-8 text-white bg-black/40 rounded-lg sm:rounded-2xl overflow-y-hidden overflow-x-hidden max-h-[330px] sm:max-h-[400px] md:max-h-[560px]">
                   <motion.div
                     key={`content-${selectedIdx}`}
                     initial={{ opacity: 0, y: 20 }}
@@ -172,7 +172,7 @@ export const HeroCarousel = ({
                       {selectedGame.metacritic && (
                         <div className="flex items-center gap-1 sm:gap-2">
                           <span
-                            className={`font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm ${
+                            className={`font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs sm:text-sm ${
                               selectedGame.metacritic >= 80
                                 ? "bg-green-500/20 text-green-400"
                                 : selectedGame.metacritic >= 60
@@ -211,7 +211,7 @@ export const HeroCarousel = ({
 
                     {/* Stores */}
                     {(selectedGame.stores?.length ?? 0) > 0 && (
-                      <div className="mt-2 sm:mt-3 hidden md:block">
+                      <div className="mt- sm:mt-3">
                           <h3 className="text-white/70">Disponible en:</h3>
                         <div className="flex flex-wrap gap-2 sm:gap-3 mt-3 sm:mt-8">
                           {selectedGame.stores?.map((s, sIdx) => {

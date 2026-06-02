@@ -154,10 +154,11 @@ export const GameDetailPage = () => {
                     }}
                     onAddToLibrary={handleAddToLibrary}
                     onDeleteFromLibrary={handleDeleteFromLibrary}
+         
                 />
 
                 {/* Main Content */}
-                <div className="max-w-7xl mx-auto px-8 py-8 flex flex-col gap-10">
+                <div className="max-w-7xl min-w-full  px-8 md:px-16 py-8 flex flex-col gap-10">
                     {/* Stats Section */}
                     <GameStats
                         gameDetail={gameDetail}

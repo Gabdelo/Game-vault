@@ -5,6 +5,7 @@ import { searchGames } from "../services/gamesService";
 export const useSearch = (GameName:string) => {
 
     const [games, setGames] = useState<Game[]>([])
+    const [count, setCount] = useState(0)
     const [loading, setLoading] = useState(false)
 
     //referencia para cancelar la peticion anterior
@@ -21,6 +22,7 @@ export const useSearch = (GameName:string) => {
                 setLoading(true)
                 const data = await searchGames(GameName, 1, controller.signal) //pasamos la señal de abort a la funcion de busqueda
                 setGames(data.results)
+                setCount(data.count)
             } catch (error) {
                 //ignore abort errors - they are expected when requests are cancelled
                 if (error instanceof Error && error.name !== 'AbortError') {
@@ -29,9 +31,9 @@ export const useSearch = (GameName:string) => {
             } finally {
                 setLoading(false)
             }
-        }, 400) //debounce de 400ms para evitar hacer una peticion por cada letra que se escriba
+        }, 1000) //debounce de 600ms para evitar hacer una peticion por cada letra que se escriba
 
         return () => clearTimeout(timeout) //si el usuario escribe algo antes de que se cumpla el timeout, se cancela el timeout anterior para evitar hacer una peticion innecesaria
     }, [GameName])
-    return { games, loading }
-}
+    return { games, loading, count }
+}//

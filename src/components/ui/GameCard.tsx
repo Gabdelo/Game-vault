@@ -84,7 +84,7 @@ export default function GameCard({ game, userId, isInLibrary, onAddToLibrary }: 
   const primaryTag = genres[0] ?? ''
 
   return (
-    <Link to={`/game/${game.id}`} className="block w-80 min-h-[270px] md:h-[370px] p-3" style={{clipPath: 'polygon(20% 0%, 90% 0%, 100% 15%, 100% 80%, 100% 100%, 10% 100%, 0% 90%, 0 0)'}}>
+    <Link to={`/game/${game.id}`} className="block w-[19rem] md:w-[17rem] min-h-[270px] md:h-[370px] p-3" >
       <motion.div
         whileHover={{ scale: 1.03 }}
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
@@ -173,7 +173,7 @@ export default function GameCard({ game, userId, isInLibrary, onAddToLibrary }: 
                 : { background: 'linear-gradient(135deg, #F2FF00, #FBFF00)', cursor: 'pointer', color: '#000000', clipPath: 'polygon(0% 0%, 95% 0%, 100% 30%, 100% 100%, 5% 100%, 0% 70%)' }
               }
             >
-              {inLibrary ? '✕ Eliminar de librería' : '+ Añadir a librería'}
+              {inLibrary ? '✕ Eliminar de biblioteca' : '+ Añadir a biblioteca'}
             </motion.button>
           )}
         </div>

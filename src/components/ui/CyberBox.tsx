@@ -62,7 +62,7 @@ export interface CyberBoxProps {
 // ─── Static styles ────────────────────────────────────────────────────────────
 
 const CYBER_BOX_CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700&display=swap');
+
 
 .cbox-root {
   position: relative;
@@ -115,7 +115,6 @@ const CYBER_BOX_CSS = `
 .cbox-label {
   position: absolute;
   top: -1px; left: 16px;
-  font-family: 'Share Tech Mono', monospace;
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -131,7 +130,7 @@ const CYBER_BOX_CSS = `
 .cbox-bottom-label {
   position: absolute;
   bottom: -1px; right: 16px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Orbitron', sans-serif;
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -147,7 +146,7 @@ const CYBER_BOX_CSS = `
 .cbox-right-label {
   position: absolute;
   top: 50%; right: -1px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Orbitron', sans-serif;
   font-size: 9px;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -166,7 +165,7 @@ const CYBER_BOX_CSS = `
   gap: 6px;
   position: absolute;
   top: -1px; right: 16px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Orbitron', sans-serif;
   font-size: 9px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -257,7 +256,7 @@ const CYBER_BOX_CSS = `
   border-bottom: 1px solid color-mix(in srgb, var(--cbox-color,#00f5ff) 20%, transparent);
   margin-bottom: 12px;
   padding-bottom: 10px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Orbitron', sans-serif;
 }
 .cbox-hud-cell {
   display: flex;
@@ -284,7 +283,7 @@ const CYBER_BOX_CSS = `
   align-items: center;
   gap: 10px;
   margin: 14px 0;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Orbitron', sans-serif;
   font-size: 9px;
   letter-spacing: 3px;
   text-transform: uppercase;

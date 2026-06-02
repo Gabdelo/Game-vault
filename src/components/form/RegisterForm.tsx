@@ -87,7 +87,7 @@ export default function RegisterForm({
 }: RegisterProps) {
   return (
     <div 
-      className="w-full h-full flex items-center justify-center p-8 bg-black"
+      className="md:w-[29rem] w-[24rem] md:w-full h-full flex items-center justify-center p-8 bg-black"
       style={{ clipPath: "polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))" }}
     >
       <div className="relative w-full max-w-md md:min-w-[25rem] flex flex-col gap-0">
@@ -98,15 +98,15 @@ export default function RegisterForm({
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
         />
         <h3 className="text-[10px] tracking-[0.2em] uppercase text-zinc-100">
-           GAME VAULT — NUEVO JUGADOR
+           THE ZONE — NUEVO JUGADOR
         </h3>
       </div>
 
       {/* Heading */}
       <div className="mb-8">
         <div className="text-2xl font-black tracking-tight text-zinc-100 leading-none">
-          <div className="text-zinc-100">ÚNETE AL</div>
-          <div className="text-[#F2FF00]">VAULT</div>
+          <div className="text-zinc-100">ÚNETE A</div>
+          <div className="text-[#F2FF00]">THE ZONE</div>
         </div>
         <div className="mt-2 text-[11px] text-zinc-100 tracking-widest uppercase">
           <span className="text-zinc-100">Crea tu cuenta y empieza a jugar</span>
@@ -179,7 +179,7 @@ export default function RegisterForm({
         </AnimatePresence>
       </form>
 
-      {/* Footer — onSwitch untouched */}
+
       <div className="mt-7 text-center text-[10px] text-zinc-100 tracking-widest uppercase flex flex-row items-center justify-center gap-1">
         <span>¿Ya tienes cuenta?</span>
         <span
